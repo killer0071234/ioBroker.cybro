@@ -1,3 +1,9 @@
+/**
+ * @Author: Daniel Gangl
+ * @Date:   2021-07-17 13:26:54
+ * @Last Modified by:   Daniel Gangl
+ * @Last Modified time: 2021-07-17 14:26:20
+ */
 "use strict";
 
 /*
@@ -36,8 +42,9 @@ class Cybro extends utils.Adapter {
 
 		// The adapters config (in the instance object everything under the attribute "native") is accessible via
 		// this.config:
-		this.log.info("config option1: " + this.config.option1);
-		this.log.info("config option2: " + this.config.option2);
+		this.log.info("configured scgi server url: " + this.config.scgiserver);
+		this.log.info("configured cybro NAD: " + this.config.plcnad);
+		this.log.info("configured read interval: " + this.config.readInterval + " sec");
 
 		/*
 		For every state in the system there has to be also an object of type state

@@ -47,7 +47,10 @@
 			"ioBroker",
 			"template",
 			"Smart Home",
-			"home automation"
+			"home automation",
+            "cybro",
+            "cybrotech",
+            "scgi server"
 		],
 		"license": "MIT",
 		"platform": "Javascript/Node.js",
@@ -70,8 +73,11 @@
 		]
 	},
 	"native": {
-		"option1": true,
-		"option2": "42"
+        "scgiserver": "http://cybroscgiserver:4000",
+        "plcnad": 1000,
+        "readInterval": 5,
+        "readScgiSysVars": false,
+        "readPlcSysVars": false
 	},
 	"objects": [],
 	"instanceObjects": []

@@ -1,3 +1,9 @@
+<!-- 
+  @Author: Daniel Gangl
+  @Date:   2021-07-17 13:26:54
+  @Last Modified by:   Daniel Gangl
+  @Last Modified time: 2021-07-17 14:39:02
+-->
 <html>
 
 <head>
@@ -77,15 +83,30 @@
 
 		<!-- For example columns with settings: -->
 		<div class="row">
-			<div class="col s6 input-field">
-				<input type="checkbox" class="value" id="option1" />
-				<label for="option1" class="translate">option1</label>
+			<div class="col s12 m8 l4 input-field">
+				<input type="text" class="value" id="scgiserver" />
+				<label for="scgiserver" class="translate">scgiserver</label>
+			</div>
+			<div class="col s12 m4 l2 input-field">
+				<input type="checkbox" class="value" id="readScgiSysVars" />
+				<label for="readScgiSysVars" class="translate">readScgiSysVars</label>
+			</div>
+        </div>
+        <div class="row">
+                <div class="col s12 m4 l4 input-field">
+				<input type="number" class="value" id="plcnad" />
+				<label for="plcnad" class="translate">plcnad</label>
 			</div>
 
-			<div class="col s6 input-field">
-				<input type="text" class="value" id="option2" />
-				<label for="option2" class="translate">option2</label>
+			<div class="col s12 m4 l4 input-field">
+				<input type="number" class="value" id="readinterval" min="1" max="3600" />
+				<label for="readinterval" class="translate">readinterval</label>
 			</div>
+			<div class="col s12 m4 l2 input-field">
+				<input type="checkbox" class="value" id="readPlcSysVars" />
+				<label for="readPlcSysVars" class="translate">readPlcSysVars</label>
+			</div>
+
 		</div>
 
 	</div>
