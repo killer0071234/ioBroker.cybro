@@ -77,7 +77,7 @@
         "plcnad": 1000,
         "pollInterval": 5000,
         "readScgiSysVars": false,
-        "readPlcSysVars": false
+        "readPlcSysVars": true
 	},
 	"objects": [],
 	"instanceObjects": []
