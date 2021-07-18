@@ -75,7 +75,7 @@
 	"native": {
         "scgiserver": "http://cybroscgiserver:4000",
         "plcnad": 1000,
-        "readInterval": 5,
+        "pollInterval": 5000,
         "readScgiSysVars": false,
         "readPlcSysVars": false
 	},
