@@ -20,7 +20,8 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^2.5.0",
-    "xml2js":"^0.4.23"
+    "xml": "^1.0.1",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^2.2.0",
