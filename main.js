@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-19 07:14:10
+ * @Last Modified time: 2021-07-19 08:08:54
  */
 "use strict";
 
@@ -47,7 +47,7 @@ class Cybro extends utils.Adapter {
 		// The adapters config (in the instance object everything under the attribute "native") is accessible via
 		// this.config:
 		this.log.info("configured scgi server url: " + this.config.scgiserver);
-		this.log.info("configured cybro NAD: " + this.config.plcnad);
+		this.log.info("configured cybro NAD: " + this.config.plcNad);
 		this.log.info("configured poll interval: " + this.config.pollInterval + " msec");
 
 		/*
@@ -94,6 +94,37 @@ class Cybro extends utils.Adapter {
 
 		result = await this.checkGroupAsync("admin", "admin");
 		this.log.info("check group user admin group admin: " + result);
+		this.config.pollInterval = this.config.pollInterval || 5000;
+
+		// read current existing objects (прочитать текущие существующие объекты)
+		this.getForeignObjects(this.namespace + ".*", "state", (err, _states) => {
+			states = _states;
+			this.getForeignStates(this.namespace + ".*", (err, values) => {
+				// subscribe on changes
+				this.subscribeStates("*");
+				this.subscribeObjects("*");
+
+				// Mark all sensors as if they received something
+				for (const id in states) {
+					if (!states.hasOwnProperty(id)) continue;
+					//if (!states[id].native.link.match(/^https?:\/\//)) {
+					//	states[id].native.link = states[id].native.link.replace(/\\/g, '/');
+					//}
+
+					states[id].value = values[id] || {val: null};
+					states[id].processed = true;
+					this.initPoll(states[id]);
+				}
+
+				// trigger all parsers first time
+				for (const timer in timers) {
+					if (timers.hasOwnProperty(timer)) {
+						this.poll(timers[timer].interval);
+					}
+				}
+			});
+		});
+
 	}
 
 	/**
@@ -233,17 +264,20 @@ class Cybro extends utils.Adapter {
 		}
 		if (this.config.readPlcSysVars)
 		{
-			fullLink += "c" + this.config.plcnad + ".sys.ip_port&c" + this.config.plcnad + ".sys.timestamp&c" + this.config.plcnad + ".sys.plc_program_status&c" + this.config.plcnad + ".sys.alc_file_status&c" + this.config.plcnad + ".sys.response_time&c" + this.config.plcnad + ".scan_time&";
+			fullLink += "c" + this.config.plcNad + ".sys.ip_port&c" + this.config.plcNad + ".sys.timestamp&c" + this.config.plcNad + ".sys.plc_program_status&c" + this.config.plcNad + ".sys.alc_file_status&c" + this.config.plcNad + ".sys.response_time&c" + this.config.plcNad + ".scan_time&";
 		}
+		for (let j = 0; j < curLinks.length; j++) {
+			//this.log.debug("Do Link: " + curLinks[j]);
+			fullLink += "c" + this.config.plcNad + curLinks[j] + "&";
+			//readLink(curLinks[j], (error, text, link) => analyseDataForStates(curStates, link, text, error, callback));
+		}
+		// remove tailing "&"
+		fullLink = fullLink.substring(0, fullLink.length - 2);
 		this.log.debug("States for current Interval (" + interval + "): " + JSON.stringify(curStates));
+		this.log.debug("Request data with URL: " + fullLink);
 		request(fullLink,  (error, response, body) => {
 			parseCybroResult(body, this);
 		});
-		for (let j = 0; j < curLinks.length; j++) {
-			this.log.debug("Do Link: " + curLinks[j]);
-			fullLink += "c" + this.config.plcnad + curLinks[j];
-			//readLink(curLinks[j], (error, text, link) => analyseDataForStates(curStates, link, text, error, callback));
-		}
 	}
 
 }
