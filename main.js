@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-19 21:28:59
+ * @Last Modified time: 2021-07-19 21:33:34
  */
 "use strict";
 
@@ -19,7 +19,9 @@ const utils = require("@iobroker/adapter-core");
 const timers = {};
 
 
-let request;
+const request = require('request');
+const parseString = require("xml2js").parseString;
+
 let states;
 class Cybro extends utils.Adapter {
 
@@ -294,7 +296,6 @@ if (require.main !== module) {
 	new Cybro();
 }
 
-const parseString = require("xml2js").parseString;
 function replaceAll(string, token, newtoken) {
 	if (token != newtoken){
 		while (string.indexOf(token) > -1) {
