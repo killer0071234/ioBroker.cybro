@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-19 08:08:54
+ * @Last Modified time: 2021-07-19 21:28:59
  */
 "use strict";
 
@@ -111,6 +111,7 @@ class Cybro extends utils.Adapter {
 					//	states[id].native.link = states[id].native.link.replace(/\\/g, '/');
 					//}
 
+					// @ts-ignore
 					states[id].value = values[id] || {val: null};
 					states[id].processed = true;
 					this.initPoll(states[id]);
