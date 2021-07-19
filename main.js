@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-19 21:33:34
+ * @Last Modified time: 2021-07-19 22:05:03
  */
 "use strict";
 
@@ -271,7 +271,7 @@ class Cybro extends utils.Adapter {
 		}
 		for (let j = 0; j < curLinks.length; j++) {
 			//this.log.debug("Do Link: " + curLinks[j]);
-			fullLink += "c" + this.config.plcNad + curLinks[j] + "&";
+			fullLink += "c" + this.config.plcNad + "." + curLinks[j] + "&";
 			//readLink(curLinks[j], (error, text, link) => analyseDataForStates(curStates, link, text, error, callback));
 		}
 		// remove tailing "&"
