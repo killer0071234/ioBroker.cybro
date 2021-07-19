@@ -73,12 +73,26 @@
 		]
 	},
 	"native": {
-        "scgiserver": "http://cybroscgiserver:4000",
-        "plcnad": 1000,
+        "scgiserver": "http://gruisla23.dyndns.biz:4000",
+        "plcNad": 1000,
         "pollInterval": 5000,
         "readScgiSysVars": false,
         "readPlcSysVars": true
 	},
 	"objects": [],
-	"instanceObjects": []
+	"instanceObjects": [
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "If connected to cybro scgi server",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
+    ]
 }

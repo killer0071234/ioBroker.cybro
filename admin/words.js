@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-18 21:59:43
+ * @Last Modified time: 2021-07-19 07:50:14
  */
 /*global systemDictionary:true */
 "use strict";
@@ -32,7 +32,7 @@ systemDictionary = {
 		"pl": "Cybrotech scgi server",
 		"zh-cn": "Cybrotech scgi server"
 	},
-	"plcnad": {
+	"Cybro-2/3 PLC NAD": {
 		"en": "Cybro-2/3 PLC NAD",
 		"de": "Cybro-2/3 PLC NAD",
 		"ru": "Cybro-2/3 PLC NAD",
@@ -102,6 +102,7 @@ systemDictionary = {
 	"Test text": {                                   "en": "Test text",                                       "de": "Testtext",                                        "ru": "Проверочный текст",                               "pt": "Texto de teste",                                  "nl": "Test tekst",                                      "fr": "Test de texte",                                   "it": "Testo di prova",                                  "es": "El texto de prueba",                              "pl": "Testowy tekst",                                   "zh-cn": "测试文本"},
 	"Type": {                                        "en": "Type",                                            "de": "Typ",                                             "ru": "Тип",                                             "pt": "Tipo",                                            "nl": "Type",                                            "fr": "Type",                                            "it": "Tipo",                                            "es": "Tipo de",                                         "pl": "Typ",                                             "zh-cn": "类型"},
 	"URL or file name": {                            "en": "URL or file name",                                "de": "URL oder Dateiname",                              "ru": "URL или имя файла",                               "pt": "URL ou nome de arquivo",                          "nl": "URL of bestandsnaam",                             "fr": "URL ou un nom de fichier",                        "it": "URL o il nome del file",                          "es": "URL o nombre de archivo",                         "pl": "Adres URL lub nazwę pliku ",                      "zh-cn": "网址或文件的名字"},
+	"PLC Allocation Name": {                         "en": "PLC Allocation Name",                             "de": "SPS Variablenname",                               "ru": "PLC Allocation Name",                             "pt": "PLC Allocation Name",                             "nl": "PLC Allocation Name",                             "fr": "PLC Allocation Name",                             "it": "PLC Allocation Name",                             "es": "PLC Allocation Name",                             "pl": "PLC Allocation Name",                             "zh-cn": "PLC Allocation Name"},
 	"Unit": {                                        "en": "Unit",                                            "de": "Einheit",                                         "ru": "Единицы",                                         "pt": "Unidade",                                         "nl": "Eenheid",                                         "fr": "Unité",                                           "it": "Unit",                                            "es": "Unidad",                                          "pl": "Blok",                                            "zh-cn": "单元"},
 	"blinds": {                                      "en": "blinds",                                          "de": "Rolladen",                                        "ru": "окна",                                            "pt": "persianas",                                       "nl": "blinds",                                          "fr": "les blinds",                                      "it": "bui",                                             "es": "persianas",                                       "pl": "żaluzje",                                         "zh-cn": "百叶窗"},
 	"boolean": {                                     "en": "boolean",                                         "de": "boolean",                                         "ru": "boolean",                                         "pt": "boolean",                                         "nl": "boolean",                                         "fr": "booléen",                                         "it": "boolean",                                         "es": "boolean",                                         "pl": "logiczne",                                        "zh-cn": "布尔"},

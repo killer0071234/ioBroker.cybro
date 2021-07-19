@@ -2,7 +2,7 @@
   @Author: Daniel Gangl
   @Date:   2021-07-17 13:26:54
   @Last Modified by:   Daniel Gangl
-  @Last Modified time: 2021-07-18 23:08:57
+  @Last Modified time: 2021-07-19 08:00:21
 -->
 <html>
 <head>
@@ -583,6 +583,11 @@
                     <label for="scgiserver" class="translate">scgiserver</label>
                 </div>    
                 <div class="input-field col s12 m6 l1">
+                    <input class="value" type="number" min="100" id="plcNad"/>
+                    <label for="plcNad" class="translate">Cybro-2/3 PLC NAD</label>
+                    <span class="translate">ms</span>
+                </div>
+                <div class="input-field col s12 m6 l1">
                     <input class="value" type="number" min="100" id="pollInterval"/>
                     <label for="pollInterval" class="translate">Default poll interval: </label>
                     <span class="translate">ms</span>
@@ -607,18 +612,18 @@
                                 <th data-name="name"       style="width: 110px" data-style="width: 110px" class="translate">Name</th>
                                 <!--th data-name="read"      style="width: 50px" data-type="checkbox" class="translate" data-def="true">Read</th-->
                                 <!--th data-name="write"     style="width: 50px" data-type="checkbox" class="translate">Write</th-->
-                                <th data-name="link"       style="width: 30%" class="translate">URL or file name</th>
+                                <th data-name="link"       style="width: 150px" class="translate">PLC Allocation Name</th>
                                 <!--<th data-name="regex"      style="width: 150px"  data-style1="width: 150px" class="translate">RegEx</th>-->
-                                <th data-name="item"       style="width: 150px"  data-style="width: 40px" data-type="number" class="translate">Item</th>
-                                <th data-name="role"       style="width: 70px"  data-style1="width: 70px" data-type="select" data-def="state" data-options="state/default;/custom;temperature;value;blinds;switch;indicator" class="translate">Role</th>
-                                <th data-name="type"       style="width: 70px"  data-style1="width: 70px" data-type="select" data-def="boolean" data-options="boolean;number;commaNumber;string;json" class="translate">Type</th>
+                                <th data-name="item"       style="width: 70px"  data-style="width: 40px" data-type="number" class="translate">Item</th>
+                                <th data-name="role"       style="width: 90px"  data-style1="width: 70px" data-type="select" data-def="state" data-options="state/default;/custom;temperature;value;blinds;switch;indicator" class="translate">Role</th>
+                                <th data-name="type"       style="width: 90px"  data-style1="width: 70px" data-type="select" data-def="boolean" data-options="boolean;number;commaNumber;string;json" class="translate">Type</th>
                                 <th data-name="unit"       style="width: 60px"  data-style="width: 60px" class="translate">Unit</th>
                                 <th data-name="substituteOld" style="width: 60px"  data-type="checkbox" data-style="width: 40px" class="translate">Old</th>
                                 <th data-name="substitute" style="width: 60px"  data-style="width: 60px" class="translate">Subs</th>
                                 <th data-name="factor"     style="width: 60px"  data-style="width: 60px" class="translate" data-def="1">Factor</th>
                                 <th data-name="offset"     style="width: 60px"  data-style="width: 60px" class="translate" data-def="0">Offset</th>
-                                <!--<th data-name="interval"   style="width: 60px"  data-style="width: 60px" class="translate translateT" title="Leave it empty if default interval is desired">Interval</th>-->
-                                <th data-buttons="delete copy"></th><!-- removed: edit up down -->
+                                <th data-name="interval"   style="width: 60px"  data-style="width: 60px" class="translate translateT" title="Leave it empty if default interval is desired">Interval</th>
+                                <th data-buttons="up down delete copy"></th><!-- removed: edit -->
                             </tr>
                             </thead>
                         </table>
