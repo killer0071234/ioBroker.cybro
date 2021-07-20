@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-20 14:02:11
+ * @Last Modified time: 2021-07-20 15:00:25
  */
 "use strict";
 
@@ -260,7 +260,9 @@ class Cybro extends utils.Adapter {
     // first mark all entries as not processed and collect the states for current interval tht are not already planned for processing
     const curStates = [];
     const curLinks = [];
-    let fullLink = this.config.scgiServer + "/?";
+    let fullLink = "";
+    if (this.config == undefined) return; // check if the adapter is already stopped (otherwise we will get a error on the next line during test:integration)
+    fullLink += this.config.scgiServer + "/?";
     for (id in states) {
       if (!states.hasOwnProperty(id)) continue;
       if (states[id].native.interval === interval && states[id].processed) {
@@ -335,8 +337,8 @@ function replaceAll(string, token, newtoken) {
 
 function parseCybroResult(data, adapter) {
   let xml;
-  this.log.debug("data reply was: " + data);
-  if (data == "") return;
+  adapter.log.debug("data reply was: " + data);
+  if (data == "" || data == undefined) return;
   parseString(
     data,
     {
