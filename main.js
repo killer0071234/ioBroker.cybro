@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-20 13:51:41
+ * @Last Modified time: 2021-07-20 14:02:11
  */
 "use strict";
 
@@ -46,7 +46,7 @@ class Cybro extends utils.Adapter {
 
     // The adapters config (in the instance object everything under the attribute "native") is accessible via
     // this.config:
-    this.log.info("configured scgi server url: " + this.config.scgiserver);
+    this.log.info("configured scgi server url: " + this.config.scgiServer);
     this.log.info("configured cybro NAD: " + this.config.plcNad);
     this.log.info(
       "configured poll interval: " + this.config.pollInterval + " msec"
@@ -293,7 +293,7 @@ class Cybro extends utils.Adapter {
         ".scan_time&";
     }
     for (let j = 0; j < curLinks.length; j++) {
-      if (curLinks[j] != "") {
+      if (curLinks[j] != "" && curLinks[j] != undefined) {
         this.log.debug("Add Allocation: " + curLinks[j] + " to read list");
         fullLink += "c" + this.config.plcNad + "." + curLinks[j] + "&";
       }
@@ -335,6 +335,7 @@ function replaceAll(string, token, newtoken) {
 
 function parseCybroResult(data, adapter) {
   let xml;
+  this.log.debug("data reply was: " + data);
   if (data == "") return;
   parseString(
     data,
