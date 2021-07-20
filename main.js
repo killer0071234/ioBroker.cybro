@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-20 22:58:39
+ * @Last Modified time: 2021-07-20 23:13:07
  */
 "use strict";
 
@@ -317,7 +317,14 @@ function parseCybroResult(data, adapter) {
   let xml;
   adapter.log.debug("data reply was: " + data);
   if (data == "" || data == undefined) return;
-  adapter.setStateAsync("info.connected", true);
+  await adapter.setStateAsync("info.connected", {
+    val: true,
+    ack: true,
+    expire: 30,
+  });
+  adapter.getForeignObjects(this.namespace + ".*", "state", (err, _states) => {
+    states = _states;
+  });
   parseString(
     data,
     {
@@ -347,7 +354,7 @@ function parseCybroResult(data, adapter) {
             ""
           );
           adapter.log.info(var_name + var_description + var_value);
-          setValue(var_name, var_value, adapter);
+          setValue(var_name, var_value, adapter, states);
         }
       } else {
         const var_name = replaceAll(JSON.stringify(xml.name), '"', "");
@@ -358,13 +365,13 @@ function parseCybroResult(data, adapter) {
           ""
         );
         adapter.log.info(var_name + var_description + var_value);
-        setValue(var_name, var_value, adapter);
+        setValue(var_name, var_value, adapter, states);
       }
     }
   );
 }
 
-function setValue(varName, value, adapter) {
+function setValue(varName, value, adapter, states) {
   for (id in states) {
     if (!states.hasOwnProperty(id)) continue;
     if (states[id].native.link === varName) {
