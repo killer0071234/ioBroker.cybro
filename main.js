@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-20 14:36:39
+ * @Last Modified time: 2021-07-20 14:43:27
  */
 "use strict";
 
@@ -337,7 +337,7 @@ function replaceAll(string, token, newtoken) {
 function parseCybroResult(data, adapter) {
   let xml;
   adapter.log.debug("data reply was: " + data);
-  if (data == "") return;
+  if (data == "" || data == undefined) return;
   parseString(
     data,
     {
