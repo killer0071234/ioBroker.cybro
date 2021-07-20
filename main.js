@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-20 15:00:25
+ * @Last Modified time: 2021-07-20 22:33:39
  */
 "use strict";
 
@@ -47,7 +47,6 @@ class Cybro extends utils.Adapter {
     // The adapters config (in the instance object everything under the attribute "native") is accessible via
     // this.config:
     this.log.info("configured scgi server url: " + this.config.scgiServer);
-    this.log.info("configured cybro NAD: " + this.config.plcNad);
     this.log.info(
       "configured poll interval: " + this.config.pollInterval + " msec"
     );
@@ -273,31 +272,10 @@ class Cybro extends utils.Adapter {
         }
       }
     }
-
-    if (this.config.readScgiSysVars) {
-      fullLink +=
-        "sys.scgi_port_status&sys.scgi_request_count&sys.scgi_request_pending&sys.server_version&sys.server_uptime&sys.cache_valid&sys.cache_request&sys.push_port_status&sys.push_count&sys.push_list_count&sys.push_ack_errors&sys.udp_rx_count&sys.udp_tx_count&sys.datalogger_status&";
-    }
-    if (this.config.readPlcSysVars) {
-      fullLink +=
-        "c" +
-        this.config.plcNad +
-        ".sys.ip_port&c" +
-        this.config.plcNad +
-        ".sys.timestamp&c" +
-        this.config.plcNad +
-        ".sys.plc_program_status&c" +
-        this.config.plcNad +
-        ".sys.alc_file_status&c" +
-        this.config.plcNad +
-        ".sys.response_time&c" +
-        this.config.plcNad +
-        ".scan_time&";
-    }
     for (let j = 0; j < curLinks.length; j++) {
       if (curLinks[j] != "" && curLinks[j] != undefined) {
         this.log.debug("Add Allocation: " + curLinks[j] + " to read list");
-        fullLink += "c" + this.config.plcNad + "." + curLinks[j] + "&";
+        fullLink += curLinks[j] + "&";
       }
     }
     // remove tailing "&"
@@ -346,6 +324,7 @@ function parseCybroResult(data, adapter) {
       ignoreAttrs: true, // keine Attribute
     },
     function (err, result) {
+      let newValues = {};
       //log("result: " + require('util').inspect(result, false, null));
       //log("XML Objekt: " + result);
       xml = JSON.stringify(result);
@@ -367,8 +346,10 @@ function parseCybroResult(data, adapter) {
             ""
           );
           const var_name_id = var_name;
-          adapter.log.info(var_name_id, var_name, var_description, var_value);
-          //sendUpdate(var_name_id, var_name, var_description, var_value);	// if not exists create the object, otherwise just set the update
+          adapter.log.info(
+            var_name_id + var_name + var_description + var_value
+          );
+          setValue(var_name, var_value, adapter);
         }
       } else {
         const var_name = replaceAll(JSON.stringify(xml.name), '"', "");
@@ -379,9 +360,67 @@ function parseCybroResult(data, adapter) {
           ""
         );
         const var_name_id = var_name;
-        adapter.log.info(var_name_id, var_name, var_description, var_value);
-        //sendUpdate(var_name_id, var_name, var_description, var_value);	// if not exists create the object, otherwise just set the update
+        adapter.log.info(var_name_id + var_name + var_description + var_value);
+        setValue(var_name, var_value, adapter);
       }
     }
   );
+}
+
+function setValue(varName, value, adapter) {
+  for (id in states) {
+    if (!states.hasOwnProperty(id)) continue;
+    if (states[id].native.link === varName) {
+      states[id].processed = true;
+
+      if (states[id].common.type === "boolean") {
+        newVal = value === 1 ? true : false;
+      } else {
+        newVal = value.length > 1 ? value[1] : value[0];
+
+        if (states[id].common.type === "number") {
+          const comma = states[id].native.comma;
+          if (!comma) newVal = newVal.replace(/,/g, "");
+          if (comma) {
+            // 1.000.000 => 1000000
+            newVal = newVal.replace(/\./g, "");
+            // 5,67 => 5.67
+            newVal = newVal.replace(",", ".");
+          }
+          // 1 000 000 => 1000000
+          newVal = newVal.replace(/\s/g, "");
+
+          newVal = parseFloat(newVal);
+          newVal *= states[id].native.factor;
+          newVal += states[id].native.offset;
+        }
+      }
+      if (
+        states[id].value.q ||
+        newVal !== states[id].value.val ||
+        !states[id].value.ack
+      ) {
+        adapter.log.debug(
+          "analyseData for " +
+            states[id]._id +
+            ", old=" +
+            states[id].value.val +
+            ", new=" +
+            newVal
+        );
+        states[id].value.ack = true;
+        states[id].value.val = newVal;
+        states[id].value.q = 0;
+        adapter.setForeignState(
+          states[id]._id,
+          {
+            val: states[id].value.val,
+            q: states[id].value.q,
+            ack: states[id].value.ack,
+          },
+          callback
+        );
+      }
+    }
+  }
 }
