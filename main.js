@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-20 23:16:54
+ * @Last Modified time: 2021-07-20 23:21:57
  */
 "use strict";
 
@@ -322,9 +322,13 @@ function parseCybroResult(data, adapter) {
     ack: true,
     expire: 30,
   });
-  adapter.getForeignObjects(this.namespace + ".*", "state", (err, _states) => {
-    states = _states;
-  });
+  adapter.getForeignObjects(
+    adapter.namespace + ".*",
+    "state",
+    (err, _states) => {
+      states = _states;
+    }
+  );
   parseString(
     data,
     {
