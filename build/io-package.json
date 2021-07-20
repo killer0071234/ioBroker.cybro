@@ -1,0 +1,96 @@
+{
+    "common": {
+        "name": "cybro",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "zh-cn": "首次出版"
+            }
+        },
+        "titleLang": {
+            "en": "Cybro PLC",
+            "de": "Cybro PLC",
+            "ru": "Cybro PLC",
+            "pt": "Cybro PLC",
+            "nl": "Cybro PLC",
+            "fr": "Cybro PLC",
+            "it": "Cybro PLC",
+            "es": "Cybro PLC",
+            "pl": "Cybro PLC",
+            "zh-cn": "Cybro PLC"
+        },
+        "desc": {
+            "en": "cybro",
+            "de": "cybro",
+            "ru": "cybro",
+            "pt": "cybro",
+            "nl": "cybro",
+            "fr": "cybro",
+            "it": "cybro",
+            "es": "cybro",
+            "pl": "cybro",
+            "zh-cn": "cybro"
+        },
+        "authors": ["Daniel Gangl <killer007@gmx.at>"],
+        "keywords": [
+            "ioBroker",
+            "template",
+            "Smart Home",
+            "home automation",
+            "cybro",
+            "cybrotech",
+            "scgi server"
+        ],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "main.js",
+        "icon": "cybro.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/killer0071234/ioBroker.cybro/master/admin/cybro.png",
+        "readme": "https://github.com/killer0071234/ioBroker.cybro/blob/master/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "protocols",
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "poll",
+        "materialize": true,
+        "dependencies": [
+            {
+                "js-controller": ">=2.0.0"
+            }
+        ]
+    },
+    "native": {
+        "scgiServer": "http://gruisla23.dyndns.biz:4000",
+        "plcNad": 1000,
+        "pollInterval": 5000,
+        "readScgiSysVars": false,
+        "readPlcSysVars": true
+    },
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "If connected to cybro scgi server",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
+    ]
+}
