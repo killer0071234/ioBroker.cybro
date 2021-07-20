@@ -72,10 +72,7 @@
   },
   "native": {
     "scgiServer": "http://gruisla23.dyndns.biz:4000",
-    "plcNad": 1000,
-    "pollInterval": 5000,
-    "readScgiSysVars": false,
-    "readPlcSysVars": true
+    "pollInterval": 5000
   },
   "objects": [],
   "instanceObjects": [
@@ -91,6 +88,146 @@
         "def": false
       },
       "native": {}
+    },
+    {
+      "_id": "info.scgi_port_status",
+      "type": "state",
+      "common": {
+        "name": "SCGI port status can be 'active' or empty (server is down).",
+        "write": false,
+        "read": true,
+        "unit": "",
+        "type": "string",
+        "role": "state"
+      },
+      "native": {
+        "link": "sys.scgi_port_status",
+        "factor": 1,
+        "item": 0,
+        "offset": 0,
+        "substitute": "",
+        "substituteOld": false
+      }
+    },
+    {
+      "_id": "info.scgi_request_count",
+      "type": "state",
+      "common": {
+        "name": "Total number of executed requests since startup.",
+        "write": false,
+        "read": true,
+        "unit": "",
+        "type": "number",
+        "role": "state"
+      },
+      "native": {
+        "link": "sys.scgi_request_count",
+        "factor": 1,
+        "item": 0,
+        "offset": 0,
+        "substitute": "",
+        "substituteOld": false
+      }
+    },
+    {
+      "_id": "info.scgi_request_pending",
+      "type": "state",
+      "common": {
+        "name": "Number of requests pending to be processed.",
+        "write": false,
+        "read": true,
+        "unit": "",
+        "type": "number",
+        "role": "state"
+      },
+      "native": {
+        "link": "sys.scgi_request_pending",
+        "factor": 1,
+        "item": 0,
+        "offset": 0,
+        "substitute": "",
+        "substituteOld": false
+      }
+    },
+    {
+      "_id": "info.server_version",
+      "type": "state",
+      "common": {
+        "name": "Server version, 'major.minor.release'.",
+        "write": false,
+        "read": true,
+        "unit": "",
+        "type": "string",
+        "role": "state"
+      },
+      "native": {
+        "link": "sys.server_version",
+        "factor": 1,
+        "item": 0,
+        "offset": 0,
+        "substitute": "",
+        "substituteOld": false
+      }
+    },
+    {
+      "_id": "info.server_uptime",
+      "type": "state",
+      "common": {
+        "name": "Time since the server is started, 'hh:mm:ss' or 'xx days, hh:mm:ss'.",
+        "write": false,
+        "read": true,
+        "unit": "",
+        "type": "string",
+        "role": "state"
+      },
+      "native": {
+        "link": "sys.server_uptime",
+        "factor": 1,
+        "item": 0,
+        "offset": 0,
+        "substitute": "",
+        "substituteOld": false
+      }
+    },
+    {
+      "_id": "info.udp_rx_count",
+      "type": "state",
+      "common": {
+        "name": "Total number of UDP packets received through UDP proxy.",
+        "write": false,
+        "read": true,
+        "unit": "",
+        "type": "number",
+        "role": "state"
+      },
+      "native": {
+        "link": "sys.udp_rx_count",
+        "factor": 1,
+        "item": 0,
+        "offset": 0,
+        "substitute": "",
+        "substituteOld": false
+      }
+    },
+    {
+      "_id": "info.udp_tx_count",
+      "type": "state",
+      "common": {
+        "name": "Total number of UDP packets transmitted through UDP proxy.",
+        "write": false,
+        "read": true,
+        "unit": "",
+        "type": "number",
+        "role": "state"
+      },
+      "native": {
+        "link": "sys.udp_tx_count",
+        "factor": 1,
+        "item": 0,
+        "offset": 0,
+        "substitute": "",
+        "substituteOld": false
+      }
     }
   ]
 }

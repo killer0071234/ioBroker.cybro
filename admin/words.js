@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-20 09:28:30
+ * @Last Modified time: 2021-07-20 21:57:08
  */
 /*global systemDictionary:true */
 "use strict";
@@ -55,30 +55,6 @@ systemDictionary = {
     es: "poll interval in seconds",
     pl: "poll interval in seconds",
     "zh-cn": "poll interval in seconds",
-  },
-  readPlcSysVars: {
-    en: "read system variables for the PLC",
-    de: "read system variables for the PLC",
-    ru: "read system variables for the PLC",
-    pt: "read system variables for the PLC",
-    nl: "read system variables for the PLC",
-    fr: "read system variables for the PLC",
-    it: "read system variables for the PLC",
-    es: "read system variables for the PLC",
-    pl: "read system variables for the PLC",
-    "zh-cn": "read system variables for the PLC",
-  },
-  readScgiSysVars: {
-    en: "read system variables for the SCGI server",
-    de: "read system variables for the SCGI server",
-    ru: "read system variables for the SCGI server",
-    pt: "read system variables for the SCGI server",
-    nl: "read system variables for the SCGI server",
-    fr: "read system variables for the SCGI server",
-    it: "read system variables for the SCGI server",
-    es: "read system variables for the SCGI server",
-    pl: "read system variables for the SCGI server",
-    "zh-cn": "read system variables for the SCGI server",
   },
   "Add rule: ": {
     en: "Add rule: ",
@@ -236,18 +212,6 @@ systemDictionary = {
     pl: "Ustawienia adaptera proxy",
     "zh-cn": "代理适配器设置",
   },
-  RegEx: {
-    en: "RegEx",
-    de: "RegEx",
-    ru: "RegEx",
-    pt: "RegEx",
-    nl: "RegEx",
-    fr: "RegEx",
-    it: "RegEx",
-    es: "RegEx",
-    pl: "Wyrażenie regularne",
-    "zh-cn": "RegEx",
-  },
   Result: {
     en: "Result",
     de: "Ergebnis",
@@ -345,16 +309,16 @@ systemDictionary = {
     "zh-cn": "网址或文件的名字",
   },
   "PLC Allocation Name": {
-    en: "PLC Allocation Name",
-    de: "SPS Variablenname",
-    ru: "PLC Allocation Name",
-    pt: "PLC Allocation Name",
-    nl: "PLC Allocation Name",
-    fr: "PLC Allocation Name",
-    it: "PLC Allocation Name",
-    es: "PLC Allocation Name",
-    pl: "PLC Allocation Name",
-    "zh-cn": "PLC Allocation Name",
+    en: "PLC Allocation Name (eg: c1000.scan_time)",
+    de: "SPS Variablenname (zb: c1000.scan_time)",
+    ru: "PLC Allocation Name (eg: c1000.scan_time)",
+    pt: "PLC Allocation Name (eg: c1000.scan_time)",
+    nl: "PLC Allocation Name (eg: c1000.scan_time)",
+    fr: "PLC Allocation Name (eg: c1000.scan_time)",
+    it: "PLC Allocation Name (eg: c1000.scan_time)",
+    es: "PLC Allocation Name (eg: c1000.scan_time)",
+    pl: "PLC Allocation Name (eg: c1000.scan_time)",
+    "zh-cn": "PLC Allocation Name (eg: c1000.scan_time)",
   },
   Unit: {
     en: "Unit",
