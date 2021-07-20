@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-20 13:34:53
+ * @Last Modified time: 2021-07-20 13:51:41
  */
 "use strict";
 
@@ -260,7 +260,7 @@ class Cybro extends utils.Adapter {
     // first mark all entries as not processed and collect the states for current interval tht are not already planned for processing
     const curStates = [];
     const curLinks = [];
-    let fullLink = this.config.scgiserver + "/?";
+    let fullLink = this.config.scgiServer + "/?";
     for (id in states) {
       if (!states.hasOwnProperty(id)) continue;
       if (states[id].native.interval === interval && states[id].processed) {
@@ -293,12 +293,13 @@ class Cybro extends utils.Adapter {
         ".scan_time&";
     }
     for (let j = 0; j < curLinks.length; j++) {
-      //this.log.debug("Do Link: " + curLinks[j]);
-      fullLink += "c" + this.config.plcNad + "." + curLinks[j] + "&";
-      //readLink(curLinks[j], (error, text, link) => analyseDataForStates(curStates, link, text, error, callback));
+      if (curLinks[j] != "") {
+        this.log.debug("Add Allocation: " + curLinks[j] + " to read list");
+        fullLink += "c" + this.config.plcNad + "." + curLinks[j] + "&";
+      }
     }
     // remove tailing "&"
-    fullLink = fullLink.substring(0, fullLink.length - 2);
+    fullLink = fullLink.substring(0, fullLink.length - 1);
     this.log.debug(
       "States for current Interval (" +
         interval +
@@ -334,7 +335,7 @@ function replaceAll(string, token, newtoken) {
 
 function parseCybroResult(data, adapter) {
   let xml;
-
+  if (data == "") return;
   parseString(
     data,
     {
