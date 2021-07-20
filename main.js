@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-20 23:13:07
+ * @Last Modified time: 2021-07-20 23:16:54
  */
 "use strict";
 
@@ -317,7 +317,7 @@ function parseCybroResult(data, adapter) {
   let xml;
   adapter.log.debug("data reply was: " + data);
   if (data == "" || data == undefined) return;
-  await adapter.setStateAsync("info.connected", {
+  adapter.setStateAsync("info.connected", {
     val: true,
     ack: true,
     expire: 30,
