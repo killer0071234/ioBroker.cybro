@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-20 14:43:27
+ * @Last Modified time: 2021-07-20 15:00:25
  */
 "use strict";
 
@@ -260,7 +260,8 @@ class Cybro extends utils.Adapter {
     // first mark all entries as not processed and collect the states for current interval tht are not already planned for processing
     const curStates = [];
     const curLinks = [];
-    let fullLink;
+    let fullLink = "";
+    if (this.config == undefined) return; // check if the adapter is already stopped (otherwise we will get a error on the next line during test:integration)
     fullLink += this.config.scgiServer + "/?";
     for (id in states) {
       if (!states.hasOwnProperty(id)) continue;
