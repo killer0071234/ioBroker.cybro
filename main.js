@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-20 22:33:39
+ * @Last Modified time: 2021-07-20 22:58:39
  */
 "use strict";
 
@@ -317,6 +317,7 @@ function parseCybroResult(data, adapter) {
   let xml;
   adapter.log.debug("data reply was: " + data);
   if (data == "" || data == undefined) return;
+  adapter.setStateAsync("info.connected", true);
   parseString(
     data,
     {
@@ -345,10 +346,7 @@ function parseCybroResult(data, adapter) {
             '"',
             ""
           );
-          const var_name_id = var_name;
-          adapter.log.info(
-            var_name_id + var_name + var_description + var_value
-          );
+          adapter.log.info(var_name + var_description + var_value);
           setValue(var_name, var_value, adapter);
         }
       } else {
@@ -359,8 +357,7 @@ function parseCybroResult(data, adapter) {
           '"',
           ""
         );
-        const var_name_id = var_name;
-        adapter.log.info(var_name_id + var_name + var_description + var_value);
+        adapter.log.info(var_name + var_description + var_value);
         setValue(var_name, var_value, adapter);
       }
     }
@@ -412,7 +409,7 @@ function setValue(varName, value, adapter) {
         states[id].value.val = newVal;
         states[id].value.q = 0;
         adapter.setForeignState(
-          states[id]._id,
+          id,
           {
             val: states[id].value.val,
             q: states[id].value.q,
