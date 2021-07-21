@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-20 23:21:57
+ * @Last Modified time: 2021-07-21 11:37:43
  */
 "use strict";
 
@@ -46,6 +46,8 @@ class Cybro extends utils.Adapter {
 
     // The adapters config (in the instance object everything under the attribute "native") is accessible via
     // this.config:
+    //this.config.scgiServer = "http://127.0.0.1:4000";
+    //this.config.pollInterval = 100;
     this.log.info("configured scgi server url: " + this.config.scgiServer);
     this.log.info(
       "configured poll interval: " + this.config.pollInterval + " msec"
@@ -315,20 +317,14 @@ function replaceAll(string, token, newtoken) {
 
 function parseCybroResult(data, adapter) {
   let xml;
+  const expire = adapter.config.pollInterval / 100; // it's 10x the poll interval
   adapter.log.debug("data reply was: " + data);
   if (data == "" || data == undefined) return;
-  adapter.setStateAsync("info.connected", {
+  adapter.setForeignState(adapter.namespace + ".info.connected", {
     val: true,
     ack: true,
-    expire: 30,
+    expire: expire,
   });
-  adapter.getForeignObjects(
-    adapter.namespace + ".*",
-    "state",
-    (err, _states) => {
-      states = _states;
-    }
-  );
   parseString(
     data,
     {
@@ -357,7 +353,7 @@ function parseCybroResult(data, adapter) {
             '"',
             ""
           );
-          adapter.log.info(var_name + var_description + var_value);
+          //adapter.log.debug(var_name + var_description + var_value);
           setValue(var_name, var_value, adapter, states);
         }
       } else {
@@ -368,7 +364,7 @@ function parseCybroResult(data, adapter) {
           '"',
           ""
         );
-        adapter.log.info(var_name + var_description + var_value);
+        //adapter.log.debug(var_name + var_description + var_value);
         setValue(var_name, var_value, adapter, states);
       }
     }
@@ -376,13 +372,17 @@ function parseCybroResult(data, adapter) {
 }
 
 function setValue(varName, value, adapter, states) {
+  let id;
+  let newVal;
   for (id in states) {
     if (!states.hasOwnProperty(id)) continue;
     if (states[id].native.link === varName) {
       states[id].processed = true;
 
       if (states[id].common.type === "boolean") {
-        newVal = value === 1 ? true : false;
+        newVal = value === 1 ? true : false; // prepare a boolean value
+      } else if (states[id].common.type === "string") {
+        newVal = value; // pass through a string tag directly
       } else {
         newVal = value.length > 1 ? value[1] : value[0];
 
@@ -409,7 +409,7 @@ function setValue(varName, value, adapter, states) {
         !states[id].value.ack
       ) {
         adapter.log.debug(
-          "analyseData for " +
+          "setValue for " +
             states[id]._id +
             ", old=" +
             states[id].value.val +
@@ -419,15 +419,11 @@ function setValue(varName, value, adapter, states) {
         states[id].value.ack = true;
         states[id].value.val = newVal;
         states[id].value.q = 0;
-        adapter.setForeignState(
-          id,
-          {
-            val: states[id].value.val,
-            q: states[id].value.q,
-            ack: states[id].value.ack,
-          },
-          callback
-        );
+        adapter.setForeignState(id, {
+          val: states[id].value.val,
+          q: states[id].value.q,
+          ack: states[id].value.ack,
+        });
       }
     }
   }
