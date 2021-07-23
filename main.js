@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-23 14:03:45
+ * @Last Modified time: 2021-07-23 16:18:34
  */
 "use strict";
 
@@ -272,6 +272,11 @@ class Cybro extends utils.Adapter {
           obj.native.interval
         ),
       };
+      this.log.info(
+        "create new timer for polling with interval: " +
+          obj.native.interval +
+          " ms"
+      );
     } else {
       timers[obj.native.interval].count++;
     }
@@ -294,7 +299,6 @@ class Cybro extends utils.Adapter {
    */
   poll(interval) {
     if (this.config == undefined) return; // check if the adapter is already stopped (otherwise we will get a error on access to "this")
-    this.log.debug("poll()->interval=" + interval);
     let id;
     // first mark all entries as not processed and collect the states for current interval tht are not already planned for processing
     const curStates = [];
@@ -311,30 +315,16 @@ class Cybro extends utils.Adapter {
           states[id].common.read
         ) {
           curLinks.push(states[id].native.link);
-          //this.log.debug("poll()->states[id]=" + JSON.stringify(states[id]));
         }
       }
-      //else if (
-      //  states[id].native.interval === interval &&
-      //  states[id].processed === false
-      //) {
-      //  this.log.debug("poll()->states[id]=" + JSON.stringify(states[id]));
-      //}
     }
     for (let j = 0; j < curLinks.length; j++) {
       if (curLinks[j] != "" && curLinks[j] != undefined) {
-        //this.log.debug("Add Allocation: " + curLinks[j] + " to read list");
         fullLink += curLinks[j] + "&";
       }
     }
     // remove tailing "&"
     fullLink = fullLink.substring(0, fullLink.length - 1);
-    //this.log.debug(
-    //  "States for current Interval (" +
-    //    interval +
-    //    "): " +
-    //    JSON.stringify(curStates)
-    //);
     // if there are no states to read return
     if (curStates.length === 0) return;
     this.log.debug("Request data with URL: " + fullLink);
