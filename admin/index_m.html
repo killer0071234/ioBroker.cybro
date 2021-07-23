@@ -2,7 +2,7 @@
   @Author: Daniel Gangl
   @Date:   2021-07-17 13:26:54
   @Last Modified by:   Daniel Gangl
-  @Last Modified time: 2021-07-20 21:58:02
+  @Last Modified time: 2021-07-23 11:33:55
 -->
 <html>
   <head>
@@ -111,54 +111,54 @@
         }
         offset = parseFloat(offset) || 0;
         factor = parseFloat(factor) || 1;
-        item = (parseFloat(item) || 0) + 1;
-        if (item < 0) item = 1;
-        if (item > 1000) item = 1000;
-        test = (test || "").toString().replace(/\r\n|[\r\n]/g, " ");
-        var m;
-        do {
-          m = regex.exec(test);
-          item--;
-        } while (item && m);
+        //item = (parseFloat(item) || 0) + 1;
+        //if (item < 0) item = 1;
+        //if (item > 1000) item = 1000;
+        //test = (test || "").toString().replace(/\r\n|[\r\n]/g, " ");
+        //var m;
+        //do {
+        //  m = regex.exec(test);
+        //  item--;
+        //} while (item && m);
 
-        if (m) {
-          var newVal;
-          var ll = m[1] ? m[0].indexOf(m[1]) : 0;
-          $("#dialog-edit-test-text").data("select", {
-            pos: m.index + ll,
-            length: m[1] ? m[1].length : len,
-          });
+        //if (m) {
+        //  var newVal;
+        //  var ll = m[1] ? m[0].indexOf(m[1]) : 0;
+        //  $("#dialog-edit-test-text").data("select", {
+        //    pos: m.index + ll,
+        //    length: m[1] ? m[1].length : len,
+        //  });
 
-          if (type === "boolean") {
-            newVal = true;
-          } else {
-            newVal = m.length > 1 ? m[1] : m[0];
-            if (type === "number") {
-              // 1,000,000 => 1000000
-              if (!comma) newVal = newVal.replace(/,/g, "");
-              if (comma) {
-                // 1.000.000 => 1000000
-                newVal = newVal.replace(/\./g, "");
-                // 5,67 => 5.67
-                newVal = newVal.replace(",", ".");
-              }
-              // 1 000 000 => 1000000
-              newVal = newVal.replace(/\s/g, "");
-              newVal = parseFloat(newVal);
-              newVal *= factor;
-              newVal += offset;
-            }
-          }
-          $("#dialog-edit-result").val(newVal);
-        } else {
-          if (type === "boolean") {
-            newVal = false;
-            $("#dialog-edit-result").val(newVal);
-          } else {
-            $("#dialog-edit-result").val(substitute);
-          }
-        }
-        M.updateTextFields("#dialog-test");
+        //  if (type === "boolean") {
+        //    newVal = true;
+        //  } else {
+        //    newVal = m.length > 1 ? m[1] : m[0];
+        //    if (type === "number") {
+        //      // 1,000,000 => 1000000
+        //      if (!comma) newVal = newVal.replace(/,/g, "");
+        //      if (comma) {
+        //        // 1.000.000 => 1000000
+        //        newVal = newVal.replace(/\./g, "");
+        //        // 5,67 => 5.67
+        //        newVal = newVal.replace(",", ".");
+        //      }
+        //      // 1 000 000 => 1000000
+        //      newVal = newVal.replace(/\s/g, "");
+        //      newVal = parseFloat(newVal);
+        //      newVal *= factor;
+        //      newVal += offset;
+        //    }
+        //  }
+        //  $("#dialog-edit-result").val(newVal);
+        //} else {
+        //  if (type === "boolean") {
+        //    newVal = false;
+        //    $("#dialog-edit-result").val(newVal);
+        //  } else {
+        //    $("#dialog-edit-result").val(substitute);
+        //  }
+        //}
+        //M.updateTextFields("#dialog-test");
       }
 
       var timeout;
@@ -351,12 +351,12 @@
                   link: obj.native.link,
                   read: obj.common.read,
                   write: obj.common.write,
-                  item: obj.native.item || 0,
+                  //item: obj.native.item || 0,
                   //regex:         obj.native.regex,
                   role: obj.common.role,
                   type: obj.common.type,
                   unit: obj.common.unit,
-                  //interval:      obj.native.interval,
+                  interval: obj.native.interval,
                   substitute: obj.native.substitute,
                   substituteOld: obj.native.substituteOld,
                   offset: obj.native.offset,
@@ -579,7 +579,7 @@
 
           newValues[v].offset = parseFloat(newValues[v].offset) || 0;
           newValues[v].factor = parseFloat(newValues[v].factor) || 1;
-          newValues[v].item = parseInt(newValues[v].item, 10) || 0;
+          //newValues[v].item = parseInt(newValues[v].item, 10) || 0;
 
           if (found) {
             var _obj = values[t].obj;
@@ -620,14 +620,14 @@
             //    _obj.native.regex = newValues[v].regex;
             //     changed = true;
             //}
-            //if (_obj.native.interval !== newValues[v].interval) {
-            //    _obj.native.interval = newValues[v].interval;
-            //    changed = true;
-            //}
-            if (_obj.native.item !== newValues[v].item) {
-              _obj.native.item = newValues[v].item;
+            if (_obj.native.interval !== newValues[v].interval) {
+              _obj.native.interval = newValues[v].interval;
               changed = true;
             }
+            //if (_obj.native.item !== newValues[v].item) {
+            //  _obj.native.item = newValues[v].item;
+            //  changed = true;
+            //}
             if (_obj.native.substitute !== newValues[v].substitute) {
               _obj.native.substitute = newValues[v].substitute;
               changed = true;
@@ -664,9 +664,9 @@
               native: {
                 link: newValues[v].link,
                 //regex:          newValues[v].regex,
-                //interval:       newValues[v].interval,
+                interval: newValues[v].interval,
                 factor: newValues[v].factor,
-                item: newValues[v].item,
+                //item: newValues[v].item,
                 offset: newValues[v].offset,
                 substitute: newValues[v].substitute,
                 substituteOld: newValues[v].substituteOld,
@@ -706,11 +706,11 @@
             </div>
           </div>
           <div class="row">
-            <div class="col s12 m8 l3 input-field">
+            <div class="input-field col s12 m8 l3">
               <input type="text" class="value" id="scgiServer" />
               <label for="scgiServer" class="translate">scgiServer</label>
             </div>
-            <div class="input-field col s12 m6 l1">
+            <div class="input-field col s12 m6 l2">
               <input class="value" type="number" min="100" id="pollInterval" />
               <label for="pollInterval" class="translate"
                 >Default poll interval:
@@ -737,23 +737,38 @@
                       <th data-name="_index" style="width: 30px"></th>
                       <th
                         data-name="name"
-                        style="width: 110px"
-                        data-style="width: 110px"
+                        style="width: 150px"
+                        data-style="width: 150px"
                         class="translate"
                       >
                         Name
                       </th>
-                      <!--th data-name="read"      style="width: 50px" data-type="checkbox" class="translate" data-def="true">Read</th-->
-                      <!--th data-name="write"     style="width: 50px" data-type="checkbox" class="translate">Write</th-->
+                      <th
+                        data-name="read"
+                        style="width: 50px"
+                        data-type="checkbox"
+                        class="translate"
+                        data-def="true"
+                      >
+                        Read
+                      </th>
+                      <th
+                        data-name="write"
+                        style="width: 50px"
+                        data-type="checkbox"
+                        class="translate"
+                      >
+                        Write
+                      </th>
                       <th
                         data-name="link"
-                        style="width: 150px"
+                        style="width: 170px"
                         class="translate"
                       >
                         PLC Allocation Name
                       </th>
                       <!--<th data-name="regex"      style="width: 150px"  data-style1="width: 150px" class="translate">RegEx</th>-->
-                      <th
+                      <!--<th
                         data-name="item"
                         style="width: 70px"
                         data-style="width: 40px"
@@ -761,7 +776,7 @@
                         class="translate"
                       >
                         Item
-                      </th>
+                      </th> -->
                       <th
                         data-name="role"
                         style="width: 90px"
@@ -837,7 +852,7 @@
                         Interval
                       </th>
                       <th data-buttons="up down delete copy"></th>
-                      <!-- removed: edit -->
+                      <!-- removed from data-buttons: edit -->
                     </tr>
                   </thead>
                 </table>
