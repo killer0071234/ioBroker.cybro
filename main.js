@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-23 17:30:04
+ * @Last Modified time: 2021-07-23 20:17:20
  */
 "use strict";
 
@@ -410,7 +410,7 @@ class Cybro extends utils.Adapter {
         } else if (states[id].common.type === "string") {
           newVal = value; // pass through a string tag directly
         } else {
-          newVal = value.length > 1 ? value[1] : value[0];
+          newVal = value;
           if (states[id].common.type === "number") {
             const comma = states[id].native.comma;
             if (!comma) newVal = newVal.replace(/,/g, "");
