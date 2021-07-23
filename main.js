@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-23 16:18:34
+ * @Last Modified time: 2021-07-23 17:30:04
  */
 "use strict";
 
@@ -46,11 +46,13 @@ class Cybro extends utils.Adapter {
 
     // The adapters config (in the instance object everything under the attribute "native") is accessible via
     // this.config:
-    //this.config.scgiServer = "http://127.0.0.1:4000";
-    //this.config.pollInterval = 100;
+    this.config.pollInterval = this.config.pollInterval || 5000; // init with a default interval, if it is zero
+    // line below is used temporaray for testing purposes (not used in production)
+    this.config.scgiServer = "http://www.solar-cybro.com/scgi";
+
     this.log.info("configured scgi server url: " + this.config.scgiServer);
     this.log.info(
-      "configured poll interval: " + this.config.pollInterval + " msec"
+      "configured default poll interval: " + this.config.pollInterval + " msec"
     );
 
     /*
@@ -101,7 +103,6 @@ class Cybro extends utils.Adapter {
 
     //result = await this.checkGroupAsync("admin", "admin");
     //this.log.info("check group user admin group admin: " + result);
-    this.config.pollInterval = this.config.pollInterval || 5000;
 
     // read current existing objects (прочитать текущие существующие объекты)
     this.getForeignObjects(this.namespace + ".*", "state", (err, _states) => {
@@ -368,7 +369,6 @@ class Cybro extends utils.Adapter {
               '"',
               ""
             );
-            //adapter.log.debug(var_name + var_description + var_value);
             adapter.setNewValue(var_name, var_value, adapter);
           }
         } else {
@@ -379,7 +379,6 @@ class Cybro extends utils.Adapter {
             '"',
             ""
           );
-          //adapter.log.debug(var_name + var_description + var_value);
           adapter.setNewValue(var_name, var_value, adapter);
         }
       }
@@ -399,12 +398,10 @@ class Cybro extends utils.Adapter {
       if (!states.hasOwnProperty(id)) continue;
       if (states[id].native.link === varName) {
         states[id].processed = true;
-        //adapter.log.debug("setValue()->states[id]=" + JSON.stringify(states[id]));
+        if (!states[id].common.read) continue;
         if (states[id].value.q === undefined) states[id].value.q = 0x0;
         // unknown value received (value = ? from scgi server)
         if (states[id].value.q !== 0x82 && q === 0x82) {
-          //states[id].value.q = 0x82;
-          //states[id].value.ack = true;
           if (states[id].native.substitute !== undefined) {
             newVal = states[id].native.substitute;
           }
