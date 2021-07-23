@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-23 20:17:20
+ * @Last Modified time: 2021-07-23 20:52:18
  */
 "use strict";
 
@@ -48,7 +48,7 @@ class Cybro extends utils.Adapter {
     // this.config:
     this.config.pollInterval = this.config.pollInterval || 5000; // init with a default interval, if it is zero
     // line below is used temporaray for testing purposes (not used in production)
-    this.config.scgiServer = "http://www.solar-cybro.com/scgi";
+    //this.config.scgiServer = "http://www.solar-cybro.com/scgi";
 
     this.log.info("configured scgi server url: " + this.config.scgiServer);
     this.log.info(
@@ -164,7 +164,7 @@ class Cybro extends utils.Adapter {
       // The object was deleted
       this.log.info(`object ${id} deleted`);
       if (states[id]) {
-        deletePoll(states[id]);
+        this.deletePoll(states[id]);
         delete states[id];
       }
     } else {
