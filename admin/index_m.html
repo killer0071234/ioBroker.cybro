@@ -2,7 +2,7 @@
   @Author: Daniel Gangl
   @Date:   2021-07-17 13:26:54
   @Last Modified by:   Daniel Gangl
-  @Last Modified time: 2021-07-23 11:33:55
+  @Last Modified time: 2021-07-23 17:36:15
 -->
 <html>
   <head>
@@ -65,17 +65,12 @@
 
       function _showResult() {
         var test = $("#dialog-edit-test-text").val();
-        //var regex         = $('#dialog-edit-regex').val();
         var type = $("#dialog-edit-type").val();
         var offset = $("#dialog-edit-offset").val();
         var item = $("#dialog-edit-item").val();
         var factor = $("#dialog-edit-factor").val();
         var substitute = $("#dialog-edit-substitute").val();
         var substituteOld = $("#dialog-edit-substituteOld").prop("checked");
-
-        //if (!regex) regex = '.+';
-
-        //if (regex[0] === '/') regex = regex.substring(1, regex.length - 1);
 
         var comma = false;
         if (type === "commaNumber") {
@@ -351,8 +346,6 @@
                   link: obj.native.link,
                   read: obj.common.read,
                   write: obj.common.write,
-                  //item: obj.native.item || 0,
-                  //regex:         obj.native.regex,
                   role: obj.common.role,
                   type: obj.common.type,
                   unit: obj.common.unit,
@@ -579,7 +572,6 @@
 
           newValues[v].offset = parseFloat(newValues[v].offset) || 0;
           newValues[v].factor = parseFloat(newValues[v].factor) || 1;
-          //newValues[v].item = parseInt(newValues[v].item, 10) || 0;
 
           if (found) {
             var _obj = values[t].obj;
@@ -616,18 +608,10 @@
               _obj.native.link = newValues[v].link;
               changed = true;
             }
-            //if (_obj.native.regex !== newValues[v].regex) {
-            //    _obj.native.regex = newValues[v].regex;
-            //     changed = true;
-            //}
             if (_obj.native.interval !== newValues[v].interval) {
               _obj.native.interval = newValues[v].interval;
               changed = true;
             }
-            //if (_obj.native.item !== newValues[v].item) {
-            //  _obj.native.item = newValues[v].item;
-            //  changed = true;
-            //}
             if (_obj.native.substitute !== newValues[v].substitute) {
               _obj.native.substitute = newValues[v].substitute;
               changed = true;
@@ -663,10 +647,8 @@
               },
               native: {
                 link: newValues[v].link,
-                //regex:          newValues[v].regex,
                 interval: newValues[v].interval,
                 factor: newValues[v].factor,
-                //item: newValues[v].item,
                 offset: newValues[v].offset,
                 substitute: newValues[v].substitute,
                 substituteOld: newValues[v].substituteOld,
@@ -767,16 +749,6 @@
                       >
                         PLC Allocation Name
                       </th>
-                      <!--<th data-name="regex"      style="width: 150px"  data-style1="width: 150px" class="translate">RegEx</th>-->
-                      <!--<th
-                        data-name="item"
-                        style="width: 70px"
-                        data-style="width: 40px"
-                        data-type="number"
-                        class="translate"
-                      >
-                        Item
-                      </th> -->
                       <th
                         data-name="role"
                         style="width: 90px"
@@ -861,78 +833,6 @@
           </div>
         </div>
       </div>
-
-      <!--<div id="dialog-test"    class="modal modal-fixed-footer" style="display: none">
-        <div class="modal-content">
-            <div class="row">
-                <div class="col s12">
-                    <h6 class="title"><span class="translate">Test regex</span>: <span class="name"></span></h6>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s6 l3">
-                    <select id="dialog-edit-type" class="test-input" data-name="type">
-                        <option value="boolean" selected="">boolean</option>
-                        <option value="number">number(.)</option>
-                        <option value="commaNumber">number(,)</option>
-                        <option value="string">string</option>
-                        <option value="json">JSON</option>
-                    </select>
-                    <label for="dialog-edit-type" class="translate">Type</label>
-                </div>
-                <div class="input-field col s6 l3">
-                    <input id="dialog-edit-substituteOld" class="test-input" type="checkbox" data-name="substituteOld"/>
-                    <span for="dialog-edit-substituteOld" class="translate">Old value</span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s6 l3">
-                    <input id="dialog-edit-substitute" class="test-input" type="text" data-name="substitute"/>
-                    <label for="dialog-edit-substitute"     class="translate">Substitute</label>
-                </div>
-                <div class="input-field col s6 l3">
-                    <input id="dialog-edit-item" class="test-input" type="number" data-name="item"/>
-                    <label for="dialog-edit-item"           class="translate">Item</label>
-                </div>
-                <div class="input-field col s6 l3">
-                    <input id="dialog-edit-factor" class="test-input" type="text" data-name="factor"/>
-                    <label for="dialog-edit-factor"         class="translate">Factor</label>
-                </div>
-                <div class="input-field col s6 l3">
-                    <input id="dialog-edit-offset" class="test-input" type="text" data-name="offset"/>
-                    <label for="dialog-edit-offset"         class="translate">Offset</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s11">
-                    <input id="dialog-edit-regex" class="test-input" style="width: calc(100% - 60px)" type="text" data-name="regex"/>
-                    <label for="dialog-edit-regex"          class="translate">RegEx</label>
-                    <a id="dialog-edit-show" class="btn-floating waves-effect waves-light green table-button-add"><i class="material-icons">play_arrow</i></a>
-                </div>
-            </div>
-            <div class="row" id="dialog-edit-error">
-                <div class="input-field col s6">
-                    <span style="color: red"></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s12">
-                    <textarea id="dialog-edit-test-text" style="width: 100%; height: 150px; resize: none;"></textarea>
-                    <label for="dialog-edit-test-text"      class="translate">Test text</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s12">
-                    <input readonly type="text" id="dialog-edit-result" />
-                    <label for="dialog-edit-result" class="translate">Result</label>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <a class="modal-action modal-close waves-effect waves-green btn btn-save"><i class="large material-icons">save</i><span class="translate">Save</span></a>
-            <a class="modal-action modal-close waves-effect waves-green btn btn-cancel"><i class="large material-icons">close</i><span class="translate">Cancel</span></a>
-        </div>
-    </div> -->
     </div>
   </body>
 </html>
