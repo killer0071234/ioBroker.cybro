@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-23 11:44:00
+ * @Last Modified time: 2021-07-23 14:03:45
  */
 "use strict";
 
@@ -124,7 +124,6 @@ class Cybro extends utils.Adapter {
         // trigger all parsers first time
         for (const timer in timers) {
           if (timers.hasOwnProperty(timer)) {
-            this.log.info("triggering first poll");
             this.poll(timers[timer].interval);
           }
         }
@@ -155,8 +154,8 @@ class Cybro extends utils.Adapter {
 
   /**
    * Is called if a subscribed object changes
-   * @param {string} id
-   * @param {ioBroker.Object | null | undefined} obj
+   * @param {string} id id of the object
+   * @param {ioBroker.Object | null | undefined} obj the object itself
    */
   onObjectChange(id, obj) {
     if (!id) return;
@@ -189,8 +188,8 @@ class Cybro extends utils.Adapter {
 
   /**
    * Is called if a subscribed state changes
-   * @param {string} id
-   * @param {ioBroker.State | null | undefined} state
+   * @param {string} id id of the state object
+   * @param {ioBroker.State | null | undefined} state descriptor of the state object
    */
   onStateChange(id, state) {
     if (state) {
@@ -230,18 +229,13 @@ class Cybro extends utils.Adapter {
   // 		}
   // 	}
   // }
-
+  /**
+   * init / add a object to the polling list
+   * @param {ioBroker.Object | null | undefined} obj the state object to add to the poll
+   */
   initPoll(obj) {
     if (!obj.native.interval) obj.native.interval = this.config.pollInterval;
 
-    if (!obj.native.regex) obj.native.regex = ".+";
-
-    if (obj.native.regex[0] === "/") {
-      obj.native.regex = obj.native.regex.substring(
-        1,
-        obj.native.regex.length - 1
-      );
-    }
     obj.native.substituteOld =
       obj.native.substituteOld === "true" || obj.native.substituteOld === true;
 
@@ -265,7 +259,6 @@ class Cybro extends utils.Adapter {
 
     obj.native.offset = parseFloat(obj.native.offset) || 0;
     obj.native.factor = parseFloat(obj.native.factor) || 1;
-    obj.native.item = parseFloat(obj.native.item) || 0;
 
     if (!timers[obj.native.interval]) {
       timers[obj.native.interval] = {
@@ -283,7 +276,10 @@ class Cybro extends utils.Adapter {
       timers[obj.native.interval].count++;
     }
   }
-
+  /**
+   * removes a object from polling
+   * @param {ioBroker.Object | null | undefined} obj the state object
+   */
   deletePoll(obj) {
     timers[obj.native.interval].count--;
     if (!timers[obj.native.interval].count) {
@@ -291,6 +287,11 @@ class Cybro extends utils.Adapter {
       delete timers[obj.native.interval];
     }
   }
+  /**
+   * worker function for the cyclic read of the data from the scgi server
+   * @param {number} interval the called interval in ms
+   * @returns nothing
+   */
   poll(interval) {
     if (this.config == undefined) return; // check if the adapter is already stopped (otherwise we will get a error on access to "this")
     this.log.debug("poll()->interval=" + interval);
@@ -305,7 +306,10 @@ class Cybro extends utils.Adapter {
       if (states[id].native.interval === interval && states[id].processed) {
         states[id].processed = false;
         curStates.push(id);
-        if (curLinks.indexOf(states[id].native.link) === -1) {
+        if (
+          curLinks.indexOf(states[id].native.link) === -1 &&
+          states[id].common.read
+        ) {
           curLinks.push(states[id].native.link);
           //this.log.debug("poll()->states[id]=" + JSON.stringify(states[id]));
         }
@@ -338,6 +342,12 @@ class Cybro extends utils.Adapter {
       this.parseCybroResult(body, this);
     });
   }
+  /**
+   * parsing received data from scgi server
+   * @param {string} data received data from scgi server (a string of a xml "file")
+   * @param {Cybro} adapter own adapter instance
+   * @returns nothing
+   */
   parseCybroResult(data, adapter) {
     let xml;
     const expire = adapter.config.pollInterval / 100; // it's 10x the poll interval
@@ -385,7 +395,12 @@ class Cybro extends utils.Adapter {
       }
     );
   }
-
+  /**
+   * parse a received value from the scgi server and set it to the state variable
+   * @param {string} varName received plc allocation name
+   * @param {string} value received value from scgi server
+   * @param {Cybro} adapter the adapter instance
+   */
   setNewValue(varName, value, adapter) {
     let id;
     let newVal;
@@ -463,7 +478,13 @@ if (require.main !== module) {
   // otherwise start the instance directly
   new Cybro();
 }
-
+/**
+ * Replace characters in a string multiple times
+ * @param {string} string String containing characters to replace
+ * @param {string} token Token to search for
+ * @param {string} newtoken New token for replacement
+ * @returns string with replaced tokens
+ */
 function replaceAll(string, token, newtoken) {
   if (token != newtoken) {
     while (string.indexOf(token) > -1) {
