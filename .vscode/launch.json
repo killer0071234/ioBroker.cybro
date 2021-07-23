@@ -13,6 +13,20 @@
       "args": ["--debug", "0"],
       //"preLaunchTask": "tsc: build - tsconfig.build.json",
       "outFiles": ["${workspaceFolder}/build/**/*.js"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Programm starten", // Name, der im VSCode Auswahlmenü neben dem grünen Play angezeigt wird
+      "program": "${workspaceRoot}/main.js"
+      //"preLaunchTask": "cp ${workspaceRoot}/main.js /opt/iobroker/node_modules/iobroker.cybro/"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "An den Prozess anfügen", // Name, der im VSCode Auswahlmenü neben dem grünen Play angezeigt wird
+      "address": "127.0.0.1", // Adresse, an dem der node.js Prozess läuft (bei Remote Debug, der Remote-Rechner)
+      "port": 9229 // Port, auf dem der node.js Debugger lauscht, der mit node --debug-brk ... gestartet wird
     }
   ]
 }
