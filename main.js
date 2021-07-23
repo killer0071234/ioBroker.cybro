@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-21 14:26:17
+ * @Last Modified time: 2021-07-23 11:44:00
  */
 "use strict";
 
@@ -46,8 +46,8 @@ class Cybro extends utils.Adapter {
 
     // The adapters config (in the instance object everything under the attribute "native") is accessible via
     // this.config:
-    this.config.scgiServer = "http://127.0.0.1:4000";
-    this.config.pollInterval = 100;
+    //this.config.scgiServer = "http://127.0.0.1:4000";
+    //this.config.pollInterval = 100;
     this.log.info("configured scgi server url: " + this.config.scgiServer);
     this.log.info(
       "configured poll interval: " + this.config.pollInterval + " msec"
@@ -58,17 +58,17 @@ class Cybro extends utils.Adapter {
 		Here a simple template for a boolean variable named "testVariable"
 		Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
 		*/
-    await this.setObjectNotExistsAsync("testVariable", {
-      type: "state",
-      common: {
-        name: "testVariable",
-        type: "boolean",
-        role: "indicator",
-        read: true,
-        write: true,
-      },
-      native: {},
-    });
+    //await this.setObjectNotExistsAsync("testVariable", {
+    //  type: "state",
+    //  common: {
+    //    name: "testVariable",
+    //    type: "boolean",
+    //    role: "indicator",
+    //    read: true,
+    //    write: true,
+    //  },
+    //  native: {},
+    //});
 
     // In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
     //this.subscribeStates("testVariable");
@@ -82,25 +82,25 @@ class Cybro extends utils.Adapter {
 			you will notice that each setState will cause the stateChange event to fire (because of above subscribeStates cmd)
 		*/
     // the variable testVariable is set to true as command (ack=false)
-    await this.setStateAsync("testVariable", true);
+    //await this.setStateAsync("testVariable", true);
 
     // same thing, but the value is flagged "ack"
     // ack should be always set to true if the value is received from or acknowledged from the target system
-    await this.setStateAsync("testVariable", { val: true, ack: true });
+    //await this.setStateAsync("testVariable", { val: true, ack: true });
 
     // same thing, but the state is deleted after 30s (getState will return null afterwards)
-    await this.setStateAsync("testVariable", {
-      val: true,
-      ack: true,
-      expire: 30,
-    });
+    //await this.setStateAsync("testVariable", {
+    //  val: true,
+    //  ack: true,
+    //  expire: 30,
+    //});
 
     // examples for the checkPassword/checkGroup functions
-    let result = await this.checkPasswordAsync("admin", "iobroker");
-    this.log.info("check user admin pw iobroker: " + result);
+    //let result = await this.checkPasswordAsync("admin", "iobroker");
+    //this.log.info("check user admin pw iobroker: " + result);
 
-    result = await this.checkGroupAsync("admin", "admin");
-    this.log.info("check group user admin group admin: " + result);
+    //result = await this.checkGroupAsync("admin", "admin");
+    //this.log.info("check group user admin group admin: " + result);
     this.config.pollInterval = this.config.pollInterval || 5000;
 
     // read current existing objects (прочитать текущие существующие объекты)
@@ -114,9 +114,6 @@ class Cybro extends utils.Adapter {
         // Mark all sensors as if they received something
         for (const id in states) {
           if (!states.hasOwnProperty(id)) continue;
-          //if (!states[id].native.link.match(/^https?:\/\//)) {
-          //	states[id].native.link = states[id].native.link.replace(/\\/g, '/');
-          //}
 
           // @ts-ignore
           states[id].value = values[id] || { val: null };
@@ -127,6 +124,7 @@ class Cybro extends utils.Adapter {
         // trigger all parsers first time
         for (const timer in timers) {
           if (timers.hasOwnProperty(timer)) {
+            this.log.info("triggering first poll");
             this.poll(timers[timer].interval);
           }
         }
@@ -171,18 +169,17 @@ class Cybro extends utils.Adapter {
       }
     } else {
       // The object was changed
-      if (!obj.native.interval)
-        obj.native.interval = adapter.config.pollInterval;
+      if (!obj.native.interval) obj.native.interval = this.config.pollInterval;
       obj.native.interval = parseInt(obj.native.interval, 10);
       this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
       if (!states[id]) {
         states[id] = obj;
-        initPoll(states[id]);
+        this.initPoll(states[id]);
       } else {
         if (states[id].native.interval !== obj.native.interval) {
-          deletePoll(states[id]);
+          this.deletePoll(states[id]);
           states[id] = obj;
-          initPoll(states[id]);
+          this.initPoll(states[id]);
         } else {
           states[id] = obj;
         }
@@ -198,14 +195,16 @@ class Cybro extends utils.Adapter {
   onStateChange(id, state) {
     if (state) {
       // The state was changed
-      this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+      //this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
       if (states[id].common.write && state.from != "system." + this.namespace) {
-        let writeLink = this.config.scgiServer + "/?" + state.native.link + "=";
+        let writeLink =
+          this.config.scgiServer + "/?" + states[id].native.link + "=";
         let wrVal = state.val;
-        if (state.common.type === "boolean") wrVal = wrVal === true ? 1 : 0;
+        if (states[id].common.type === "boolean")
+          wrVal = wrVal === true ? 1 : 0;
         writeLink += wrVal;
         request(writeLink, (error, response, body) => {
-          parseCybroResult(body, this);
+          this.parseCybroResult(body, this);
         });
       }
     } else {
@@ -272,7 +271,13 @@ class Cybro extends utils.Adapter {
       timers[obj.native.interval] = {
         interval: obj.native.interval,
         count: 1,
-        timer: setInterval(this.poll, obj.native.interval, obj.native.interval),
+        timer: setInterval(
+          () => {
+            this.poll(obj.native.interval);
+          },
+          obj.native.interval,
+          obj.native.interval
+        ),
       };
     } else {
       timers[obj.native.interval].count++;
@@ -286,7 +291,7 @@ class Cybro extends utils.Adapter {
       delete timers[obj.native.interval];
     }
   }
-  poll(interval, callback) {
+  poll(interval) {
     if (this.config == undefined) return; // check if the adapter is already stopped (otherwise we will get a error on access to "this")
     this.log.debug("poll()->interval=" + interval);
     let id;
@@ -302,33 +307,149 @@ class Cybro extends utils.Adapter {
         curStates.push(id);
         if (curLinks.indexOf(states[id].native.link) === -1) {
           curLinks.push(states[id].native.link);
-          this.log.debug("poll()->states[id]=" + JSON.stringify(states[id]));
+          //this.log.debug("poll()->states[id]=" + JSON.stringify(states[id]));
         }
-      } else if (
-        states[id].native.interval === interval &&
-        states[id].processed === false
-      ) {
-        this.log.debug("poll()->states[id]=" + JSON.stringify(states[id]));
       }
+      //else if (
+      //  states[id].native.interval === interval &&
+      //  states[id].processed === false
+      //) {
+      //  this.log.debug("poll()->states[id]=" + JSON.stringify(states[id]));
+      //}
     }
     for (let j = 0; j < curLinks.length; j++) {
       if (curLinks[j] != "" && curLinks[j] != undefined) {
-        this.log.debug("Add Allocation: " + curLinks[j] + " to read list");
+        //this.log.debug("Add Allocation: " + curLinks[j] + " to read list");
         fullLink += curLinks[j] + "&";
       }
     }
     // remove tailing "&"
     fullLink = fullLink.substring(0, fullLink.length - 1);
-    this.log.debug(
-      "States for current Interval (" +
-        interval +
-        "): " +
-        JSON.stringify(curStates)
-    );
+    //this.log.debug(
+    //  "States for current Interval (" +
+    //    interval +
+    //    "): " +
+    //    JSON.stringify(curStates)
+    //);
+    // if there are no states to read return
+    if (curStates.length === 0) return;
     this.log.debug("Request data with URL: " + fullLink);
     request(fullLink, (error, response, body) => {
-      parseCybroResult(body, this);
+      this.parseCybroResult(body, this);
     });
+  }
+  parseCybroResult(data, adapter) {
+    let xml;
+    const expire = adapter.config.pollInterval / 100; // it's 10x the poll interval
+    adapter.log.debug("data reply was: " + data);
+    if (data == "" || data == undefined) return;
+    adapter.setForeignState(adapter.namespace + ".info.connection", {
+      val: true,
+      ack: true,
+      expire: expire,
+    });
+    parseString(
+      data,
+      {
+        explicitArray: false, // keine expliziten Arrays
+        ignoreAttrs: true, // keine Attribute
+      },
+      function (err, result) {
+        xml = JSON.stringify(result);
+        xml = JSON.parse(xml);
+        xml = JSON.stringify(xml.data.var);
+        xml = JSON.parse(xml);
+        if (Array.isArray(xml)) {
+          for (let i = 0, len = xml.length; i < len; i++) {
+            const var_name = replaceAll(JSON.stringify(xml[i].name), '"', "");
+            const var_value = replaceAll(JSON.stringify(xml[i].value), '"', "");
+            const var_description = replaceAll(
+              JSON.stringify(xml[i].description),
+              '"',
+              ""
+            );
+            //adapter.log.debug(var_name + var_description + var_value);
+            adapter.setNewValue(var_name, var_value, adapter);
+          }
+        } else {
+          const var_name = replaceAll(JSON.stringify(xml.name), '"', "");
+          const var_value = replaceAll(JSON.stringify(xml.value), '"', "");
+          const var_description = replaceAll(
+            JSON.stringify(xml.description),
+            '"',
+            ""
+          );
+          //adapter.log.debug(var_name + var_description + var_value);
+          adapter.setNewValue(var_name, var_value, adapter);
+        }
+      }
+    );
+  }
+
+  setNewValue(varName, value, adapter) {
+    let id;
+    let newVal;
+    let q = value === "?" ? 0x82 : 0; // i
+    for (id in states) {
+      if (!states.hasOwnProperty(id)) continue;
+      if (states[id].native.link === varName) {
+        states[id].processed = true;
+        //adapter.log.debug("setValue()->states[id]=" + JSON.stringify(states[id]));
+        if (states[id].value.q === undefined) states[id].value.q = 0x0;
+        // unknown value received (value = ? from scgi server)
+        if (states[id].value.q !== 0x82 && q === 0x82) {
+          //states[id].value.q = 0x82;
+          //states[id].value.ack = true;
+          if (states[id].native.substitute !== undefined) {
+            newVal = states[id].native.substitute;
+          }
+        } else if (states[id].common.type === "boolean") {
+          newVal = value === 1 ? true : false; // prepare a boolean value
+        } else if (states[id].common.type === "string") {
+          newVal = value; // pass through a string tag directly
+        } else {
+          newVal = value.length > 1 ? value[1] : value[0];
+          if (states[id].common.type === "number") {
+            const comma = states[id].native.comma;
+            if (!comma) newVal = newVal.replace(/,/g, "");
+            if (comma) {
+              // 1.000.000 => 1000000
+              newVal = newVal.replace(/\./g, "");
+              // 5,67 => 5.67
+              newVal = newVal.replace(",", ".");
+            }
+            // 1 000 000 => 1000000
+            newVal = newVal.replace(/\s/g, "");
+
+            newVal = parseFloat(newVal);
+            newVal *= states[id].native.factor;
+            newVal += states[id].native.offset;
+          }
+        }
+        if (
+          states[id].value.q ||
+          newVal !== states[id].value.val ||
+          !states[id].value.ack
+        ) {
+          adapter.log.debug(
+            "setValue for " +
+              states[id]._id +
+              ", old=" +
+              states[id].value.val +
+              ", new=" +
+              newVal
+          );
+          states[id].value.ack = true;
+          states[id].value.val = newVal;
+          states[id].value.q = q;
+          adapter.setForeignState(id, {
+            val: states[id].value.val,
+            q: states[id].value.q,
+            ack: states[id].value.ack,
+          });
+        }
+      }
+    }
   }
 }
 
@@ -350,118 +471,4 @@ function replaceAll(string, token, newtoken) {
     }
   }
   return string;
-}
-
-function parseCybroResult(data, adapter) {
-  let xml;
-  const expire = adapter.config.pollInterval / 100; // it's 10x the poll interval
-  adapter.log.debug("data reply was: " + data);
-  if (data == "" || data == undefined) return;
-  adapter.setForeignState(adapter.namespace + ".info.connection", {
-    val: true,
-    ack: true,
-    expire: expire,
-  });
-  parseString(
-    data,
-    {
-      explicitArray: false, // keine expliziten Arrays
-      ignoreAttrs: true, // keine Attribute
-    },
-    function (err, result) {
-      xml = JSON.stringify(result);
-      xml = JSON.parse(xml);
-      xml = JSON.stringify(xml.data.var);
-      xml = JSON.parse(xml);
-      if (Array.isArray(xml)) {
-        for (let i = 0, len = xml.length; i < len; i++) {
-          const var_name = replaceAll(JSON.stringify(xml[i].name), '"', "");
-          const var_value = replaceAll(JSON.stringify(xml[i].value), '"', "");
-          const var_description = replaceAll(
-            JSON.stringify(xml[i].description),
-            '"',
-            ""
-          );
-          //adapter.log.debug(var_name + var_description + var_value);
-          setValue(var_name, var_value, adapter, states);
-        }
-      } else {
-        const var_name = replaceAll(JSON.stringify(xml.name), '"', "");
-        const var_value = replaceAll(JSON.stringify(xml.value), '"', "");
-        const var_description = replaceAll(
-          JSON.stringify(xml.description),
-          '"',
-          ""
-        );
-        //adapter.log.debug(var_name + var_description + var_value);
-        setValue(var_name, var_value, adapter, states);
-      }
-    }
-  );
-}
-
-function setValue(varName, value, adapter, states) {
-  let id;
-  let newVal;
-  let q = value === "?" ? 0x82 : 0; // i
-  for (id in states) {
-    if (!states.hasOwnProperty(id)) continue;
-    if (states[id].native.link === varName) {
-      states[id].processed = true;
-      //adapter.log.debug("setValue()->states[id]=" + JSON.stringify(states[id]));
-
-      // unknown value received (value = ? from scgi server)
-      if (states[id].value.q !== 0x82 && q === 0x82) {
-        //states[id].value.q = 0x82;
-        //states[id].value.ack = true;
-        if (states[id].native.substitute !== undefined) {
-          newVal = states[id].native.substitute;
-        }
-      } else if (states[id].common.type === "boolean") {
-        newVal = value === 1 ? true : false; // prepare a boolean value
-      } else if (states[id].common.type === "string") {
-        newVal = value; // pass through a string tag directly
-      } else {
-        newVal = value.length > 1 ? value[1] : value[0];
-        if (states[id].common.type === "number") {
-          const comma = states[id].native.comma;
-          if (!comma) newVal = newVal.replace(/,/g, "");
-          if (comma) {
-            // 1.000.000 => 1000000
-            newVal = newVal.replace(/\./g, "");
-            // 5,67 => 5.67
-            newVal = newVal.replace(",", ".");
-          }
-          // 1 000 000 => 1000000
-          newVal = newVal.replace(/\s/g, "");
-
-          newVal = parseFloat(newVal);
-          newVal *= states[id].native.factor;
-          newVal += states[id].native.offset;
-        }
-      }
-      if (
-        states[id].value.q ||
-        newVal !== states[id].value.val ||
-        !states[id].value.ack
-      ) {
-        adapter.log.debug(
-          "setValue for " +
-            states[id]._id +
-            ", old=" +
-            states[id].value.val +
-            ", new=" +
-            newVal
-        );
-        states[id].value.ack = true;
-        states[id].value.val = newVal;
-        states[id].value.q = q;
-        adapter.setForeignState(id, {
-          val: states[id].value.val,
-          q: states[id].value.q,
-          ack: states[id].value.ack,
-        });
-      }
-    }
-  }
 }
