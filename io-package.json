@@ -71,7 +71,7 @@
     ]
   },
   "native": {
-    "scgiServer": "http://gruisla23.dyndns.biz:4000",
+    "scgiServer": "http://www.solar-cybro.com/scgi",
     "pollInterval": 5000
   },
   "objects": [],

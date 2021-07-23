@@ -71,7 +71,7 @@
         ]
     },
     "native": {
-        "scgiServer": "http://gruisla23.dyndns.biz:4000",
+        "scgiServer": "http://www.solar-cybro.com",
         "pollInterval": 5000
     },
     "objects": [],
@@ -222,6 +222,126 @@
             },
             "native": {
                 "link": "sys.udp_tx_count",
+                "factor": 1,
+                "item": 0,
+                "offset": 0,
+                "substitute": "",
+                "substituteOld": false
+            }
+        },
+        {
+            "_id": "info.c1000.ip_port",
+            "type": "state",
+            "common": {
+                "name": "IP address and UDP port of the controller.",
+                "write": false,
+                "read": true,
+                "unit": "",
+                "type": "string",
+                "role": "state"
+            },
+            "native": {
+                "link": "c1000.sys.ip_port",
+                "factor": 1,
+                "item": 0,
+                "offset": 0,
+                "substitute": "",
+                "substituteOld": false
+            }
+        },
+        {
+            "_id": "info.c1000.timestamp",
+            "type": "state",
+            "common": {
+                "name": "Program download timestamp.",
+                "write": false,
+                "read": true,
+                "unit": "",
+                "type": "string",
+                "role": "state"
+            },
+            "native": {
+                "link": "c1000.sys.timestamp",
+                "factor": 1,
+                "item": 0,
+                "offset": 0,
+                "substitute": "",
+                "substituteOld": false
+            }
+        },
+        {
+            "_id": "info.c1000.plc_program_status",
+            "type": "state",
+            "common": {
+                "name": "Program status.",
+                "write": false,
+                "read": true,
+                "unit": "",
+                "type": "string",
+                "role": "state"
+            },
+            "native": {
+                "link": "c1000.sys.plc_program_status",
+                "factor": 1,
+                "item": 0,
+                "offset": 0,
+                "substitute": "",
+                "substituteOld": false
+            }
+        },
+        {
+            "_id": "info.c1000.alc_file_status",
+            "type": "state",
+            "common": {
+                "name": "llocation file status.",
+                "write": false,
+                "read": true,
+                "unit": "ms",
+                "type": "number",
+                "role": "state"
+            },
+            "native": {
+                "link": "c1000.sys.alc_file_status",
+                "factor": 1,
+                "item": 0,
+                "offset": 0,
+                "substitute": "",
+                "substituteOld": false
+            }
+        },
+        {
+            "_id": "info.c1000.response_time",
+            "type": "state",
+            "common": {
+                "name": "Last communication cycle duration in milliseconds.",
+                "write": false,
+                "read": true,
+                "unit": "ms",
+                "type": "number",
+                "role": "state"
+            },
+            "native": {
+                "link": "c1000.sys.response_time",
+                "factor": 1,
+                "item": 0,
+                "offset": 0,
+                "substitute": "",
+                "substituteOld": false
+            }
+        },
+        {
+            "_id": "info.c1000.scan_time",
+            "type": "state",
+            "common": {
+                "name": "Last scan execution time [ms].",
+                "write": false,
+                "read": true,
+                "unit": "ms",
+                "type": "number",
+                "role": "state"
+            },
+            "native": {
+                "link": "c1000.sys.scan_time",
                 "factor": 1,
                 "item": 0,
                 "offset": 0,
