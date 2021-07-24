@@ -228,46 +228,6 @@
         "substitute": "",
         "substituteOld": false
       }
-    },
-    {
-      "_id": "info.c1000.ip_port",
-      "type": "state",
-      "common": {
-        "name": "IP address and UDP port of the controller.",
-        "write": false,
-        "read": true,
-        "unit": "",
-        "type": "string",
-        "role": "state"
-      },
-      "native": {
-        "link": "c1000.sys.ip_port",
-        "factor": 1,
-        "item": 0,
-        "offset": 0,
-        "substitute": "",
-        "substituteOld": false
-      }
-    },
-    {
-      "_id": "info.c1000.timestamp",
-      "type": "state",
-      "common": {
-        "name": "Program download timestamp.",
-        "write": false,
-        "read": true,
-        "unit": "",
-        "type": "string",
-        "role": "state"
-      },
-      "native": {
-        "link": "c1000.sys.timestamp",
-        "factor": 1,
-        "item": 0,
-        "offset": 0,
-        "substitute": "",
-        "substituteOld": false
-      }
     }
   ]
 }
