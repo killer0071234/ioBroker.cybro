@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-24 20:45:50
+ * @Last Modified time: 2021-07-24 23:19:20
  */
 "use strict";
 
@@ -115,9 +115,12 @@ class Cybro extends utils.Adapter {
         // Mark all sensors as if they received something
         for (const id in states) {
           if (!states.hasOwnProperty(id)) continue;
-
           // @ts-ignore
-          states[id].value = values[id] || { val: null };
+          states[id].value = values[id] || {
+            val: null,
+            q: undefined,
+            ack: false,
+          };
           states[id].processed = true;
           this.initPoll(states[id]);
         }
@@ -399,7 +402,7 @@ class Cybro extends utils.Adapter {
       if (states[id].native.link === varName) {
         states[id].processed = true;
         if (!states[id].common.read) continue;
-        if (states[id].value === undefined) continue;
+        //if (states[id].value === undefined) continue;
         if (states[id].value.q === undefined) states[id].value.q = 0x0;
         // unknown value received (value = ? from scgi server)
         if (states[id].value.q !== 0x82 && q === 0x82) {
