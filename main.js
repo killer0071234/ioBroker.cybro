@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-24 23:19:20
+ * @Last Modified time: 2021-07-25 14:27:51
  */
 "use strict";
 
@@ -106,8 +106,11 @@ class Cybro extends utils.Adapter {
 
     // read current existing objects (прочитать текущие существующие объекты)
     this.getForeignObjects(this.namespace + ".*", "state", (err, _states) => {
+      if (err) this.log.error("getForeignObjects() err=" + JSON.stringify(err));
       states = _states;
       this.getForeignStates(this.namespace + ".*", (err, values) => {
+        if (err)
+          this.log.error("getForeignStates() err=" + JSON.stringify(err));
         // subscribe on changes
         this.subscribeStates("*");
         this.subscribeObjects("*");
@@ -115,10 +118,22 @@ class Cybro extends utils.Adapter {
         // Mark all sensors as if they received something
         for (const id in states) {
           if (!states.hasOwnProperty(id)) continue;
+          //this.log.info(JSON.stringify(states[id]));
+          //states[id]._id = values[id]._id;
+          //if (!states[id]._id) {
+          //  this.log.warn("_id is missing for: " + id);
+          //  states[id]._id = id;
+          //}
+          //this.getObject(id, "state", (err, value) => {
+          //  if (!err) {
+          //    values[id] = value;
+          //    this.log.info("getObject(" + id + ") " + JSON.stringify(value));
+          //  }
+          //});
           // @ts-ignore
           states[id].value = values[id] || {
             val: null,
-            q: undefined,
+            q: 0x0,
             ack: false,
           };
           states[id].processed = true;
@@ -207,6 +222,13 @@ class Cybro extends utils.Adapter {
           wrVal = wrVal === true ? 1 : 0;
         writeLink += wrVal;
         request(writeLink, (error, response, body) => {
+          if (error)
+            this.log.warn(
+              "Request: " +
+                fullLink +
+                " falied with error:" +
+                JSON.stringify(error)
+            );
           this.parseCybroResult(body, this);
         });
       }
@@ -333,6 +355,10 @@ class Cybro extends utils.Adapter {
     if (curStates.length === 0) return;
     this.log.debug("Request data with URL: " + fullLink);
     request(fullLink, (error, response, body) => {
+      if (error)
+        this.log.warn(
+          "Request: " + fullLink + " falied with error:" + JSON.stringify(error)
+        );
       this.parseCybroResult(body, this);
     });
   }
@@ -410,7 +436,7 @@ class Cybro extends utils.Adapter {
             newVal = states[id].native.substitute;
           }
         } else if (states[id].common.type === "boolean") {
-          newVal = value === 1 ? true : false; // prepare a boolean value
+          newVal = parseInt(value) === 1 ? true : false; // prepare a boolean value
         } else if (states[id].common.type === "string") {
           newVal = value; // pass through a string tag directly
         } else {
