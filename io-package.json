@@ -19,15 +19,15 @@
     "title": "Cybro PLC",
     "titleLang": {
       "en": "Cybro PLC",
-      "de": "Cybro PLC",
+      "de": "Cybro-SPS",
       "ru": "Cybro PLC",
       "pt": "Cybro PLC",
-      "nl": "Cybro PLC",
+      "nl": "Cybro-PLC",
       "fr": "Cybro PLC",
       "it": "Cybro PLC",
       "es": "Cybro PLC",
       "pl": "Cybro PLC",
-      "zh-cn": "Cybro PLC"
+      "zh-cn": "赛博PLC"
     },
     "desc": {
       "en": "cybro",
@@ -44,11 +44,13 @@
     "authors": ["Daniel Gangl <killer007@gmx.at>"],
     "keywords": [
       "ioBroker",
+      "ioBroker-adapter",
       "template",
       "Smart Home",
       "home automation",
       "cybro",
       "cybrotech",
+      "Robotina",
       "scgi server"
     ],
     "license": "MIT",
@@ -103,6 +105,7 @@
       },
       "native": {
         "link": "sys.scgi_port_status",
+        "interval": "60000",
         "factor": 1,
         "item": 0,
         "offset": 0,
@@ -123,6 +126,7 @@
       },
       "native": {
         "link": "sys.scgi_request_count",
+        "interval": "60000",
         "factor": 1,
         "item": 0,
         "offset": 0,
@@ -143,6 +147,7 @@
       },
       "native": {
         "link": "sys.scgi_request_pending",
+        "interval": "60000",
         "factor": 1,
         "item": 0,
         "offset": 0,
@@ -163,6 +168,7 @@
       },
       "native": {
         "link": "sys.server_version",
+        "interval": "60000",
         "factor": 1,
         "item": 0,
         "offset": 0,
@@ -183,6 +189,7 @@
       },
       "native": {
         "link": "sys.server_uptime",
+        "interval": "60000",
         "factor": 1,
         "item": 0,
         "offset": 0,
@@ -203,6 +210,7 @@
       },
       "native": {
         "link": "sys.udp_rx_count",
+        "interval": "60000",
         "factor": 1,
         "item": 0,
         "offset": 0,
@@ -223,6 +231,7 @@
       },
       "native": {
         "link": "sys.udp_tx_count",
+        "interval": "60000",
         "factor": 1,
         "item": 0,
         "offset": 0,

@@ -8,6 +8,26 @@
       "problemMatcher": [],
       "label": "npm: build:ts",
       "detail": "tsc -p tsconfig.build.json"
+    },
+    {
+      "label": "copy_main_to_opt",
+      "type": "shell",
+      "command": "cp",
+      "args": [
+        "${workspaceRoot}/main.js",
+        "/opt/iobroker/node_modules/iobroker.cybro/"
+      ]
+    },
+    {
+      "label": "start_debugger",
+      "type": "shell",
+      "command": "node",
+      "args": [
+        "--inspect-brk=192.168.1.100:9229",
+        "/opt/iobroker/node_modules/iobroker.cybro/main.js",
+        "--force",
+        "--logs"
+      ]
     }
   ]
 }
