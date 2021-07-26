@@ -1,8 +1,9 @@
 /**
+ * Translation Source: https://translator.iobroker.in/
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-25 13:03:04
+ * @Last Modified time: 2021-07-25 16:14:27
  */
 /*global systemDictionary:true */
 "use strict";

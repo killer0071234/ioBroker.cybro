@@ -2,7 +2,7 @@
  * @Author: Daniel Gangl
  * @Date:   2021-07-17 13:26:54
  * @Last Modified by:   Daniel Gangl
- * @Last Modified time: 2021-07-25 14:27:51
+ * @Last Modified time: 2021-07-26 22:40:53
  */
 "use strict";
 
@@ -221,16 +221,20 @@ class Cybro extends utils.Adapter {
         if (states[id].common.type === "boolean")
           wrVal = wrVal === true ? 1 : 0;
         writeLink += wrVal;
-        request(writeLink, (error, response, body) => {
-          if (error)
-            this.log.warn(
-              "Request: " +
-                fullLink +
-                " falied with error:" +
-                JSON.stringify(error)
-            );
-          this.parseCybroResult(body, this);
-        });
+        request(
+          writeLink,
+          this.config.pollInterval || 500,
+          (error, response, body) => {
+            if (error)
+              this.log.warn(
+                "Request: " +
+                  fullLink +
+                  " falied with error:" +
+                  JSON.stringify(error)
+              );
+            this.parseCybroResult(body, this);
+          }
+        );
       }
     } else {
       // The state was deleted
@@ -245,15 +249,32 @@ class Cybro extends utils.Adapter {
   //  * @param {ioBroker.Message} obj
   //  */
   // onMessage(obj) {
-  // 	if (typeof obj === "object" && obj.message) {
-  // 		if (obj.command === "send") {
-  // 			// e.g. send email or pushover or whatever
-  // 			this.log.info("send command");
-
-  // 			// Send response in callback if required
-  // 			if (obj.callback) this.sendTo(obj.from, obj.command, "Message received", obj.callback);
-  // 		}
-  // 	}
+  //   if (typeof obj === "object" && obj.message) {
+  //     switch (obj.command) {
+  //       case "send":
+  //         break;
+  //       case "checkIP":
+  //         checkIP(obj.message, function (res) {
+  //           if (obj.callback)
+  //             this.sendTo(
+  //               obj.from,
+  //               obj.command,
+  //               JSON.stringify(res),
+  //               obj.callback
+  //             );
+  //         });
+  //         break;
+  //       default:
+  //         break;
+  //     }
+  //     if (obj.command === "send") {
+  //       // e.g. send email or pushover or whatever
+  //       this.log.info("send command");
+  //       // Send response in callback if required
+  //       if (obj.callback)
+  //         this.sendTo(obj.from, obj.command, "Message received", obj.callback);
+  //     }
+  //   }
   // }
   /**
    * init / add a object to the polling list
@@ -354,7 +375,7 @@ class Cybro extends utils.Adapter {
     // if there are no states to read return
     if (curStates.length === 0) return;
     this.log.debug("Request data with URL: " + fullLink);
-    request(fullLink, (error, response, body) => {
+    request(fullLink, interval / 2, (error, response, body) => {
       if (error)
         this.log.warn(
           "Request: " + fullLink + " falied with error:" + JSON.stringify(error)
@@ -389,26 +410,32 @@ class Cybro extends utils.Adapter {
         xml = JSON.parse(xml);
         xml = JSON.stringify(xml.data.var);
         xml = JSON.parse(xml);
+        let var_error_code = 0;
         if (Array.isArray(xml)) {
           for (let i = 0, len = xml.length; i < len; i++) {
             const var_name = replaceAll(JSON.stringify(xml[i].name), '"', "");
             const var_value = replaceAll(JSON.stringify(xml[i].value), '"', "");
-            const var_description = replaceAll(
-              JSON.stringify(xml[i].description),
-              '"',
-              ""
-            );
-            adapter.setNewValue(var_name, var_value, adapter);
+            if (xml[i].hasOwnProperty("error_code"))
+              var_error_code = parseInt(xml[i].error_code);
+            else var_error_code = 0;
+            //const var_description = replaceAll(
+            //  JSON.stringify(xml[i].description),
+            //  '"',
+            //  ""
+            //);
+            adapter.setNewValue(var_name, var_value, var_error_code, adapter);
           }
         } else {
           const var_name = replaceAll(JSON.stringify(xml.name), '"', "");
           const var_value = replaceAll(JSON.stringify(xml.value), '"', "");
-          const var_description = replaceAll(
-            JSON.stringify(xml.description),
-            '"',
-            ""
-          );
-          adapter.setNewValue(var_name, var_value, adapter);
+          if (xml.hasOwnProperty("error_code"))
+            var_error_code = parseInt(xml.error_code);
+          //const var_description = replaceAll(
+          //  JSON.stringify(xml.description),
+          //  '"',
+          //  ""
+          //);
+          adapter.setNewValue(var_name, var_value, var_error_code, adapter);
         }
       }
     );
@@ -417,21 +444,35 @@ class Cybro extends utils.Adapter {
    * parse a received value from the scgi server and set it to the state variable
    * @param {string} varName received plc allocation name
    * @param {string} value received value from scgi server
+   * @param {number} var_error_code received error code from scgi server
    * @param {Cybro} adapter the adapter instance
    */
-  setNewValue(varName, value, adapter) {
+  setNewValue(varName, value, var_error_code, adapter) {
     let id;
     let newVal;
-    let q = value === "?" ? 0x82 : 0; // i
+    let q = 0;
+    if (var_error_code === 0 && value !== "?") q = 0x0;
+    else if (var_error_code === 1 || var_error_code === 3)
+      // Timeout, Device not found,
+      q = 0x82;
+    else if (
+      var_error_code === 2 ||
+      var_error_code === 4 ||
+      var_error_code === 5
+    )
+      // Unknown, PLC head error, no alc error
+      q = 0x81;
+    else if (value === "?") q = 0x82;
+
     for (id in states) {
       if (!states.hasOwnProperty(id)) continue;
       if (states[id].native.link === varName) {
         states[id].processed = true;
         if (!states[id].common.read) continue;
         //if (states[id].value === undefined) continue;
-        if (states[id].value.q === undefined) states[id].value.q = 0x0;
-        // unknown value received (value = ? from scgi server)
-        if (states[id].value.q !== 0x82 && q === 0x82) {
+        if (states[id].value.q === undefined) states[id].value.q = q;
+        // unknown value received (value = ? from scgi server OR error_code !== 0)
+        if (states[id].value.q !== q && q !== ioBroker.StateQuality.good) {
           if (states[id].native.substitute !== undefined) {
             newVal = states[id].native.substitute;
           }
@@ -510,3 +551,27 @@ function replaceAll(string, token, newtoken) {
   }
   return string;
 }
+
+//function checkIP(ipToCheck, adapter, callback) {
+//  request.get(
+//    ipToCheck + "/?sys.server_version",
+//    function (error, response, body) {
+//      try {
+//        const testData = JSON.parse(body);
+//        if (
+//          !error &&
+//          response.statusCode == 200 &&
+//          "server_version" in testData
+//        ) {
+//          callback({ error: 0, message: testData });
+//        } else {
+//          adapter.log.error("IP invalid");
+//          callback({ error: 1, message: {} });
+//        }
+//      } catch (e) {
+//        adapter.log.error("Address is not a SCGI server");
+//        callback({ error: 1, message: {} });
+//      }
+//    }
+//  );
+//}
